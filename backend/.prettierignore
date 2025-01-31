@@ -1,0 +1,10 @@
+# Ignore build output
+/dist
+/build
+/node_modules
+
+# Ignore generated files
+prisma/schema.prisma
+
+# Ignore specific hidden files
+*.env
