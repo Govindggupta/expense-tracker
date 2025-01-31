@@ -69,7 +69,6 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
       res.status(STATUS.CREATED).json({ createUser });
     }
   } catch (error) {
-    console.log("reached here");
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error' });
   }
 };
