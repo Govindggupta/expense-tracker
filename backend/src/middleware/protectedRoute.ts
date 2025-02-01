@@ -41,7 +41,7 @@ export const protectedRoute = async (
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, username: true },
+      select: { id: true, email: true },
     });
 
     if (!user) {

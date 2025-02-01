@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 
 export const signup = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { firstName, lastName, username, email, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!firstName || !lastName || !username || !email || !password) {
+    if (!email || !password) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'All fields are required' });
       return;
     }
@@ -32,7 +32,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const existingUsername = await prisma.user.findUnique({
       where: {
-        username,
+        email,
       },
     });
 
@@ -56,9 +56,6 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const createUser = await prisma.user.create({
       data: {
-        firstName,
-        lastName,
-        username,
         email,
         password: hashedPassword,
       },
@@ -75,16 +72,16 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    if (!username || !password) {
+    if (!email || !password) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'All fields are required' });
       return;
     }
 
     const user = await prisma.user.findUnique({
       where: {
-        username,
+        email,
       },
     });
 
@@ -125,9 +122,6 @@ export const getHome = async (req: Request, res: Response): Promise<void> => {
       },
       select: {
         id: true,
-        firstName: true,
-        lastName: true,
-        username: true,
         email: true,
         password: false,
       },

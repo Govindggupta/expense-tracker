@@ -2,10 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
+  "types": "module",
   "scripts": {
-    "dev": "node dist/server.js",
-    "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "tsc && node dist/server.js",
+    "build": "npm install && tsc && prisma generate --schema=./prisma/schema.prisma",
+    "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
