@@ -1,5 +1,5 @@
 import express from 'express';
-import { protectedRoute } from '../middleware/protectedRoute.js';
+// import { protectedRoute } from '../middleware/protectedRoute.js';
 import {
   getAllCategories,
   createCategory,
@@ -9,9 +9,9 @@ import {
 
 const router = express.Router();
 
-router.get('/', protectedRoute, getAllCategories);
-router.post('/', protectedRoute, createCategory);
-router.put('/:id', protectedRoute, updateCategory);
-router.delete('/:id', protectedRoute, deleteCategory);
+router.get('/', getAllCategories);
+router.post('/', createCategory);
+router.put('/:id', updateCategory);
+router.delete('/:id', deleteCategory);
 
 export default router;

@@ -1,11 +1,15 @@
-import { Text, View } from "react-native";
-import "../global.css";
+import '../global.css';
+import { Redirect } from 'expo-router';
+import { useAuth } from '@clerk/clerk-expo';
 
+const Index = () => {
+  const { isSignedIn } = useAuth();
 
-export default function Index() {
-  return (
-    <View>
-      <Text className="bg-slate-500">Edit app/index.tsx to edit this screen.</Text>
-    </View>
-  );
-}
+  if (isSignedIn) {
+    return <Redirect href="/(root)/(tabs)/Home" />;
+  }
+
+  return <Redirect href="/(auth)/Login" />;
+};
+
+export default Index;

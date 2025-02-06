@@ -8,9 +8,9 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  clerk_id  String   @id @unique
+  name      String
   email     String   @unique
-  password  String
   createdAt DateTime @default(now())
 
   // relatioships
@@ -30,7 +30,7 @@ model Expense {
   createdAt     DateTime @default(now())
 
   // relationships
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
   Category Category @relation(fields: [categoryId], references: [id])
 }
 
@@ -41,6 +41,6 @@ model Category {
   createdAt DateTime @default(now())
 
   // Relationships
-  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user     User?     @relation(fields: [userId], references: [clerk_id], onDelete: SetNull)
   expenses Expense[]
 }

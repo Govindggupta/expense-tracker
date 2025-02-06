@@ -7,7 +7,13 @@ const prisma = new PrismaClient();
 // Fetch all categories (predefined and user-specific)
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    // const userId = req.user?.id;
+    const {userId} = req.body;
+
+    if (!userId) {
+      res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      return;
+    }
 
     const categories = await prisma.category.findMany({
       where: {
@@ -27,8 +33,8 @@ export const getAllCategories = async (req: Request, res: Response) => {
 // Create a new category
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
-    const userId = req.user?.id;
+    const { name, userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -51,8 +57,8 @@ export const createCategory = async (req: Request, res: Response) => {
 export const updateCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
-    const userId = req.user?.id;
+    const { name, userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -73,7 +79,8 @@ export const updateCategory = async (req: Request, res: Response) => {
 export const deleteCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const { userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
