@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { generateTokenAndSetCookie } from '../utils/generateToken.js';
 import { STATUS } from '../constants/status.js';
 
 const prisma = new PrismaClient();
