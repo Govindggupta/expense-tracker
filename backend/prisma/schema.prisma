@@ -16,6 +16,7 @@ model User {
   // relatioships
   expenses Expense[]
   Category Category[]
+  Wallet   Wallet[]
 }
 
 model Expense {
@@ -23,15 +24,22 @@ model Expense {
   userId        String
   amount        Decimal
   categoryId    String
-  // walletId String
+  walletId      String
   description   String?
   date          DateTime @default(now())
   attachmentUrl String?
   createdAt     DateTime @default(now())
+  type          ExpenseType @default(EXPENSE)
 
   // relationships
   user     User     @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
   Category Category @relation(fields: [categoryId], references: [id])
+  Wallet   Wallet?  @relation(fields: [walletId], references: [id])
+}
+
+enum ExpenseType {
+  EXPENSE
+  INCOME
 }
 
 model Category {
@@ -42,5 +50,18 @@ model Category {
 
   // Relationships
   user     User?     @relation(fields: [userId], references: [clerk_id], onDelete: SetNull)
+  expenses Expense[]
+}
+
+model Wallet {
+  id        String   @id @default(uuid())
+  userId    String   
+  name      String
+  balance   Decimal
+  currency  String @default("INR")
+  createdAt DateTime @default(now())
+
+  // Relationships
+  user     User      @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
   expenses Expense[]
 }

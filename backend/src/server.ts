@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 // import authRoute from './routes/auth.route.js';
 import expensesRoute from './routes/expenses.route.js';
 import categoryRoute from './routes/category.route.js';
+import walletRoute from './routes/wallet.route.js';
 import cors from 'cors';
 
 const prisma = new PrismaClient();
@@ -39,6 +40,7 @@ app.use(cookieParser());
 // app.use('/v1/auth', authRoute);
 app.use('/v1/expenses', expensesRoute);
 app.use('/v1/categories', categoryRoute);
+app.use('/v1/wallet', walletRoute);
 
 app.listen(PORT, async () => {
   try {

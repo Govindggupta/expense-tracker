@@ -1,33 +1,70 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { STATUS } from '../constants/status.js';
+import { Decimal } from 'decimal.js';
 
 const prisma = new PrismaClient();
 // create expense
 export const createExpenses = async (req: Request, res: Response) => {
   try {
-    const { amount, description, attachmentUrl, categoryId, userId } = req.body;
+    const { amount, description, attachmentUrl, categoryId, userId, walletId, type } = req.body;
     // const userId = req.user?.id; // Assuming user ID is attached to the request by middleware
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      return; 
     }
 
     if (!amount || isNaN(Number(amount))) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Amount is required' });
+      return; 
     }
     if (!categoryId) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Category is required' });
+      return; 
     }
+    if (!walletId) {
+      res.status(STATUS.BAD_REQUEST).json({ message: 'Wallet is required' });
+      return; 
+    }
+    if (!['EXPENSE', 'INCOME'].includes(type)) {
+      res.status(STATUS.BAD_REQUEST).json({ message: 'Type must be either EXPENSE or INCOME' });
+      return; 
+    }
+
+    const wallet = await prisma.wallet.findUnique({
+      where: { id: walletId },
+    });
+
+    if (!wallet) {
+      res.status(STATUS.NOT_FOUND).json({ message: 'Wallet not found' });
+      return; 
+    }
+
+    const newBalance =
+      type === 'INCOME'
+        ? new Decimal(wallet.balance.toString()).add(new Decimal(amount.toString()))
+        : new Decimal(wallet.balance.toString()).sub(new Decimal(amount.toString()));
+
+    // if (newBalance.lt(0)) {
+    //   return res.status(STATUS.BAD_REQUEST).json({ message: 'Insufficient funds in wallet' });
+    // }
 
     const newExpense = await prisma.expense.create({
       data: {
         userId,
-        amount: Number(amount),
+        amount: new Decimal(amount),
         description,
         attachmentUrl,
         categoryId,
+        walletId,
+        type,
       },
+    });
+
+    await prisma.wallet.update({
+      where: { id: walletId },
+      data: { balance: newBalance },
     });
 
     res.status(STATUS.CREATED).json({ expense: newExpense });
@@ -85,20 +122,71 @@ export const getExpenseById = async (req: Request, res: Response) => {
 export const updateExpense = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { amount, description, attachmentUrl, categoryId, userId } = req.body;
-    // const userId = req.user?.id;
+    const { amount, description, attachmentUrl, categoryId, userId, walletId, type } = req.body;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      return;
     }
 
     if (!categoryId) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Category is required' });
+      return;
+    }
+
+    const existingExpense = await prisma.expense.findUnique({
+      where: { id },
+    });
+
+    if (!existingExpense) {
+      res.status(STATUS.NOT_FOUND).json({ message: 'Expense not found' });
+      return;
+    }
+
+    const oldWalletId = existingExpense.walletId;
+    const oldAmount = existingExpense.amount;
+    const oldType = existingExpense.type;
+
+    if (walletId !== oldWalletId || amount !== oldAmount || type !== oldType) {
+      const oldWallet = await prisma.wallet.findUnique({
+        where: { id: oldWalletId },
+      });
+
+      const newWallet = await prisma.wallet.findUnique({
+        where: { id: walletId },
+      });
+
+      if (!oldWallet || !newWallet) {
+        res.status(STATUS.NOT_FOUND).json({ message: 'Wallet not found' });
+        return;
+      }
+
+      // Revert the old wallet balance
+      const revertOldWalletBalance =
+        oldType === 'INCOME' ? oldWallet.balance.sub(oldAmount) : oldWallet.balance.add(oldAmount);
+
+      // Apply the new wallet balance
+      const applyNewWalletBalance =
+        type === 'INCOME' ? newWallet.balance.add(amount) : newWallet.balance.sub(amount);
+
+      // if (applyNewWalletBalance < 0) {
+      //   return res.status(STATUS.BAD_REQUEST).json({ message: 'Insufficient funds in new wallet' });
+      // }
+
+      await prisma.wallet.update({
+        where: { id: oldWalletId },
+        data: { balance: revertOldWalletBalance },
+      });
+
+      await prisma.wallet.update({
+        where: { id: walletId },
+        data: { balance: applyNewWalletBalance },
+      });
     }
 
     const updatedExpense = await prisma.expense.update({
-      where: { id, userId },
-      data: { amount, description, attachmentUrl, categoryId },
+      where: { id },
+      data: { amount, description, attachmentUrl, categoryId, walletId, type },
     });
 
     res.status(STATUS.OK).json({ expense: updatedExpense });

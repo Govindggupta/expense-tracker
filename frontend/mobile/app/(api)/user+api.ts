@@ -25,6 +25,12 @@ export async function POST(request: Request) {
       `;
 
       userClerkId = newUser[0]?.clerk_id;
+
+      // Create a default wallet for the new user
+      await sql`
+        INSERT INTO "Wallet" (userId, name, balance, currency)
+        VALUES (${userClerkId}, 'Balance', 0, 'USD');
+      `;
     }
 
     return new Response(JSON.stringify({ clerkId: userClerkId }), { status: 201 });
