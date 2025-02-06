@@ -6,14 +6,14 @@ const prisma = new PrismaClient();
 // create expense
 export const createExpenses = async (req: Request, res: Response) => {
   try {
-    const { amount, description, attachmentUrl, categoryId } = req.body;
-    const userId = req.user?.id; // Assuming user ID is attached to the request by middleware
+    const { amount, description, attachmentUrl, categoryId, userId } = req.body;
+    // const userId = req.user?.id; // Assuming user ID is attached to the request by middleware
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
     }
 
-    if (!amount) {
+    if (!amount || isNaN(Number(amount))) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Amount is required' });
     }
     if (!categoryId) {
@@ -23,7 +23,7 @@ export const createExpenses = async (req: Request, res: Response) => {
     const newExpense = await prisma.expense.create({
       data: {
         userId,
-        amount,
+        amount: Number(amount),
         description,
         attachmentUrl,
         categoryId,
@@ -39,7 +39,8 @@ export const createExpenses = async (req: Request, res: Response) => {
 // Fetch all user expenses
 export const getAllExpenses = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const { userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -59,7 +60,8 @@ export const getAllExpenses = async (req: Request, res: Response) => {
 export const getExpenseById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const { userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -83,8 +85,8 @@ export const getExpenseById = async (req: Request, res: Response) => {
 export const updateExpense = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { amount, description, attachmentUrl, categoryId } = req.body;
-    const userId = req.user?.id;
+    const { amount, description, attachmentUrl, categoryId, userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -109,7 +111,8 @@ export const updateExpense = async (req: Request, res: Response) => {
 export const deleteExpense = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
+    const { userId } = req.body;
+    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
