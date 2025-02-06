@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // create expense
 export const createExpenses = async (req: Request, res: Response) => {
   try {
-    const { amount, description, attachmentUrl } = req.body;
+    const { amount, description, attachmentUrl, categoryId } = req.body;
     const userId = req.user?.id; // Assuming user ID is attached to the request by middleware
 
     if (!userId) {
@@ -17,6 +17,9 @@ export const createExpenses = async (req: Request, res: Response) => {
     if (!amount) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Amount is required' });
     }
+    if (!categoryId) {
+      res.status(STATUS.BAD_REQUEST).json({ message: 'Category is required' });
+    }
 
     const newExpense = await prisma.expense.create({
       data: {
@@ -24,6 +27,7 @@ export const createExpenses = async (req: Request, res: Response) => {
         amount,
         description,
         attachmentUrl,
+        categoryId,
       },
     });
 
@@ -80,16 +84,20 @@ export const getExpenseById = async (req: Request, res: Response) => {
 export const updateExpense = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { amount, description, attachmentUrl } = req.body;
+    const { amount, description, attachmentUrl, categoryId } = req.body;
     const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
     }
 
+    if (!categoryId) {
+      res.status(STATUS.BAD_REQUEST).json({ message: 'Category is required' });
+    }
+
     const updatedExpense = await prisma.expense.update({
       where: { id, userId },
-      data: { amount, description, attachmentUrl },
+      data: { amount, description, attachmentUrl, categoryId },
     });
 
     res.status(STATUS.OK).json({ expense: updatedExpense });
