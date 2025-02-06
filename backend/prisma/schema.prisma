@@ -15,13 +15,14 @@ model User {
 
   // relatioships
   expenses Expense[]
+  Category Category[]
 }
 
 model Expense {
   id            String   @id @default(uuid())
-  userId        String   
+  userId        String
   amount        Decimal
-  // catagoryId String
+  categoryId    String
   // walletId String
   description   String?
   data          DateTime @default(now())
@@ -29,5 +30,17 @@ model Expense {
   createdAt     DateTime @default(now())
 
   // relationships
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Category Category @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  userId    String? // Optional custom categories per user
+  createdAt DateTime @default(now())
+
+  // Relationships
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  expenses Expense[]
 }
