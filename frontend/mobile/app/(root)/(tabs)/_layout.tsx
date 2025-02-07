@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Ionicons, MaterialCommunityIcons, Entypo, MaterialIcons, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, Entypo, FontAwesome5 } from '@expo/vector-icons';
 import CustomDrawerContent from '@/components/CustomDrawerContent';
 import SearchButton from '@/components/SearchButton';
 
@@ -12,7 +12,7 @@ const TabsComponent = () => (
     screenOptions={{
       tabBarStyle: {
         position: 'absolute',
-        bottom: 20,
+        bottom: 10,
         left: 20,
         right: 20,
         elevation: 0,
@@ -25,8 +25,8 @@ const TabsComponent = () => (
           width: 10,
           height: 10,
         },
-        paddingHorizontal: 22,
-        marginHorizontal: 10,
+        paddingHorizontal: 18,
+        marginHorizontal: 8,
       },
       tabBarItemStyle: {
         justifyContent: 'center',
@@ -43,7 +43,9 @@ const TabsComponent = () => (
     <Tabs.Screen
       name="Expenses"
       options={{
-        tabBarIcon: ({ color, size }) => <FontAwesome5 name="clipboard-list" size={size} color={color} />,
+        tabBarIcon: ({ color, size }) => (
+          <FontAwesome5 name="clipboard-list" size={size} color={color} />
+        ),
         tabBarLabel: 'Expenses',
         headerShown: false,
       }}
@@ -51,7 +53,9 @@ const TabsComponent = () => (
     <Tabs.Screen
       name="Analysis"
       options={{
-        tabBarIcon: ({ color, size }) => <MaterialCommunityIcons name="google-analytics" size={size} color={color} />,
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="google-analytics" size={size} color={color} />
+        ),
         tabBarLabel: 'Analysis',
         headerShown: false,
       }}
@@ -59,9 +63,7 @@ const TabsComponent = () => (
     <Tabs.Screen
       name="Split"
       options={{
-        tabBarIcon: ({ color, size }) => (
-          <Entypo name="slideshare" size={size} color={color} />
-        ),
+        tabBarIcon: ({ color, size }) => <Entypo name="slideshare" size={size} color={color} />,
         tabBarLabel: 'Split',
         headerShown: false,
       }}
@@ -77,7 +79,7 @@ const TabsComponent = () => (
     <Tabs.Screen
       name="Categories"
       options={{
-        tabBarIcon: ({ color, size }) => <MaterialIcons name="category" size={size} color={color} />,
+        tabBarIcon: ({ color, size }) => <Ionicons name="pricetag" size={size} color={color} />,
         tabBarLabel: 'Categories',
         headerShown: false,
       }}
@@ -92,11 +94,11 @@ const Layout = () => {
 
   return (
     <Drawer.Navigator drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen 
-        name="Expense Tracker" 
-        component={TabsComponent} 
+      <Drawer.Screen
+        name="Expense Tracker"
+        component={TabsComponent}
         options={{
-          headerRight: () => <SearchButton className='mr-5' onClick={handleSearchButtonClick} />,
+          headerRight: () => <SearchButton className="mr-5" onClick={handleSearchButtonClick} />,
         }}
       />
     </Drawer.Navigator>
