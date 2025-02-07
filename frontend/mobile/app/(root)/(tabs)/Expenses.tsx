@@ -7,7 +7,7 @@ import { useAuth } from '@clerk/clerk-expo';
 import AddButton from '@/components/AddButton';
 import { router } from 'expo-router';
 
-const Expense = () => {
+const Expenses = () => {
   const handleAddPress = () => {
     router.replace('/(root)/AddExpense');
   };
@@ -20,15 +20,15 @@ const Expense = () => {
             Show all Expense
           </Text>
         </View>
-        <View className="absolute bottom-5 right-5">
-          <AddButton color="blue" size={65} onPress={handleAddPress} />
+        <View className="absolute bottom-24 right-5">
+          <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
         </View>
       </SignedIn>
     </SafeAreaView>
   );
 };
 
-export default Expense;
+export default Expenses;
 
 // const { user } = useUser();
 //   const { getToken } = useAuth();
