@@ -34,7 +34,7 @@ model Expense {
   // relationships
   user     User     @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
   Category Category @relation(fields: [categoryId], references: [id])
-  Wallet   Wallet?  @relation(fields: [walletId], references: [id])
+  Wallet   Wallet  @relation(fields: [walletId], references: [id])
 }
 
 enum ExpenseType {
