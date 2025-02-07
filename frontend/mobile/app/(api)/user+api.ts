@@ -1,4 +1,7 @@
 import { neon } from '@neondatabase/serverless';
+import { v4 as uuidv4 } from 'uuid';
+
+const walletId = uuidv4();
 
 export async function POST(request: Request) {
   try {
@@ -28,8 +31,9 @@ export async function POST(request: Request) {
 
       // Create a default wallet for the new user
       await sql`
-        INSERT INTO "Wallet" (userId, name, balance, currency)
-        VALUES (${userClerkId}, 'Balance', 0, 'USD');
+        INSERT INTO "Wallet" (id, "userId", name, balance, currency)
+        VALUES (${walletId}, ${userClerkId}, 'Balance', 0, 'INR')
+        RETURNING id;
       `;
     }
 

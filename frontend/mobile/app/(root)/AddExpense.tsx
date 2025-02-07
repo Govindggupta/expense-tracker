@@ -1,9 +1,19 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, KeyboardAvoidingView, Platform, BackHandler, Vibration } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  BackHandler,
+  Vibration,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
-import { router } from "expo-router";
+import { router } from 'expo-router';
 
 const AddExpense = () => {
   const [selectedOption, setSelectedOption] = useState('Expense');
@@ -45,7 +55,7 @@ const AddExpense = () => {
   const handleLongPress = () => {
     Vibration.vibrate(65);
     setInputValue((prev) => prev.slice(0, 0));
-  }
+  };
 
   const handleSave = () => {
     // Handle save logic
@@ -61,7 +71,7 @@ const AddExpense = () => {
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [])
+    }, []),
   );
 
   return (
@@ -74,16 +84,18 @@ const AddExpense = () => {
         <View className="flex-row justify-center gap-20 mb-5 mt-3">
           <TouchableOpacity onPress={() => handleOptionSelect('Income')}>
             <Text
-              className={`text-xl p-2 ${selectedOption === 'Income' ? 'font-bold text-blue-500' : ''
-                }`}
+              className={`text-xl p-2 ${
+                selectedOption === 'Income' ? 'font-bold text-blue-500' : ''
+              }`}
             >
               Income
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleOptionSelect('Expense')}>
             <Text
-              className={`text-xl p-2 ${selectedOption === 'Expense' ? 'font-bold text-blue-500' : ''
-                }`}
+              className={`text-xl p-2 ${
+                selectedOption === 'Expense' ? 'font-bold text-blue-500' : ''
+              }`}
             >
               Expense
             </Text>
@@ -116,7 +128,7 @@ const AddExpense = () => {
           <View className="flex-row justify-between items-center mb-3 border border-gray-400 rounded-lg h-20">
             <Text className="text-4xl m-5 font-semibold">{inputValue}</Text>
             <TouchableOpacity onPress={handleUndo} onLongPress={handleLongPress}>
-              <Ionicons className='mr-4' name="backspace" size={27} color="black" />
+              <Ionicons className="mr-4" name="backspace" size={27} color="black" />
             </TouchableOpacity>
           </View>
           {['123+', '456-', '789x', '=0.÷'].map((row, rowIndex) => (
@@ -124,8 +136,9 @@ const AddExpense = () => {
               {row.split('').map((item) => (
                 <TouchableOpacity
                   key={item}
-                  className={`w-20 h-20 justify-center items-center border border-gray-400 rounded-lg ${['+', '-', 'x', '÷', '='].includes(item) ? 'bg-gray-300' : ''
-                    }`}
+                  className={`w-20 h-20 justify-center items-center border border-gray-400 rounded-lg ${
+                    ['+', '-', 'x', '÷', '='].includes(item) ? 'bg-gray-300' : ''
+                  }`}
                   onPress={() => handleNumpadPress(item)}
                 >
                   <Text className="text-lg">{item}</Text>
@@ -143,14 +156,19 @@ const AddExpense = () => {
           >
             <Text className="text-white text-lg">Save</Text>
           </TouchableOpacity>
-          <Link href="/" className="flex-1 mx-1 p-3 bg-gray-500 rounded-lg justify-center items-center">
+          <Link
+            href="/"
+            className="flex-1 mx-1 p-3 bg-gray-500 rounded-lg justify-center items-center"
+          >
             <Text className="text-white text-lg text-center">Cancel</Text>
           </Link>
         </View>
 
         {/* Date and Month */}
         <View className="items-center">
-          <Text className='text-lg font-semibold text-gray-600'>Date: {new Date().toLocaleDateString()}</Text>
+          <Text className="text-lg font-semibold text-gray-600">
+            Date: {new Date().toLocaleDateString()}
+          </Text>
         </View>
       </View>
     </KeyboardAvoidingView>
