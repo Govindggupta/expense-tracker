@@ -175,7 +175,7 @@ const Signup = () => {
           <CustomButton
             title="Browse Home"
             onPress={() => {
-              router.push(`/(root)/(tabs)/Home`);
+              router.push(`/(root)/(tabs)/Expense`);
               setShowSuccessModal(false);
             }}
             className="bg-blue-600 text-white text-lg p-2"

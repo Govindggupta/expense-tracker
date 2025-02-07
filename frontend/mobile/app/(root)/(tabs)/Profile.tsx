@@ -2,14 +2,19 @@ import { SignedIn, useAuth, useUser } from '@clerk/clerk-expo';
 import { Text, Button, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import AddButton from '@/components/AddButton';
 
-export default function Page() {
+export default function Profile() {
   const { user } = useUser();
   const { signOut } = useAuth();
 
   const handleSignOut = () => {
     signOut();
     router.replace('/(auth)/Login');
+  };
+
+  const handleAddPress = () => {
+    router.replace('/(root)/AddExpense');
   };
 
   return (
@@ -20,8 +25,11 @@ export default function Page() {
           <Text className="text-lg text-gray-600 text-center mb-6">
             Hello {user?.firstName || user?.emailAddresses[0].emailAddress}
           </Text>
-
           <Button title="Logout" onPress={handleSignOut} />
+        </View>
+
+        <View className="absolute bottom-5 right-5">
+          <AddButton color="blue" size={65} onPress={handleAddPress} />
         </View>
       </SignedIn>
     </SafeAreaView>
