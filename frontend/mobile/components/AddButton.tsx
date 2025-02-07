@@ -2,13 +2,13 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-interface AddCircleButtonProps {
+interface AddButtonProps {
   color?: string;
   size?: number;
   onPress?: () => void;
 }
 
-const AddCircleButton: React.FC<AddCircleButtonProps> = ({ color = 'blue', size = 24, onPress }) => {
+const AddButton: React.FC<AddButtonProps> = ({ color = 'blue', size = 24, onPress }) => {
   return (
     <TouchableOpacity className="justify-center items-center" onPress={onPress}>
       <Ionicons name="add-circle" size={size} color={color} />
@@ -16,4 +16,4 @@ const AddCircleButton: React.FC<AddCircleButtonProps> = ({ color = 'blue', size 
   );
 };
 
-export default AddCircleButton;
+export default AddButton;
