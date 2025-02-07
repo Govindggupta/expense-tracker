@@ -58,7 +58,6 @@ model Wallet {
   userId    String   
   name      String
   balance   Decimal
-  currency  String @default("INR")
   createdAt DateTime @default(now())
 
   // Relationships

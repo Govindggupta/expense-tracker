@@ -31,8 +31,8 @@ export async function POST(request: Request) {
 
       // Create a default wallet for the new user
       await sql`
-        INSERT INTO "Wallet" (id, "userId", name, balance, currency)
-        VALUES (${walletId}, ${userClerkId}, 'Balance', 0, 'INR')
+        INSERT INTO "Wallet" (id, "userId", name, balance )
+        VALUES (${walletId}, ${userClerkId}, 'Cash', 0)
         RETURNING id;
       `;
     }
