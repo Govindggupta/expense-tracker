@@ -5,12 +5,13 @@ import {
   updateWallet,
   deleteWallet,
 } from '../controllers/wallet.controller.js';
+import { requireAuth } from '@clerk/express';
 
 const router = express.Router();
 
-router.post('/', createWallet);
-router.get('/', getAllWallets);
-router.put('/:id', updateWallet);
-router.delete('/:id', deleteWallet);
+router.post('/', requireAuth(), createWallet);
+router.get('/', requireAuth(), getAllWallets);
+router.put('/:id', requireAuth(), updateWallet);
+router.delete('/:id', requireAuth(), deleteWallet);
 
 export default router;
