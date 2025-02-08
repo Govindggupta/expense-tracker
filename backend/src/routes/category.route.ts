@@ -1,5 +1,6 @@
 import express from 'express';
-// import { protectedRoute } from '../middleware/protectedRoute.js';
+import { requireAuth } from '@clerk/express';
+
 import {
   getAllCategories,
   createCategory,
@@ -9,9 +10,9 @@ import {
 
 const router = express.Router();
 
-router.get('/', getAllCategories);
-router.post('/', createCategory);
-router.put('/:id', updateCategory);
-router.delete('/:id', deleteCategory);
+router.get('/', requireAuth(), getAllCategories);
+router.post('/', requireAuth(), createCategory);
+router.put('/:id', requireAuth(), updateCategory);
+router.delete('/:id', requireAuth(), deleteCategory);
 
 export default router;

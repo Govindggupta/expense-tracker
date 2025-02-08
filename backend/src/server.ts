@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import walletRoute from './routes/wallet.route.js';
+import categoryRoute from './routes/category.route.js';
 
 dotenv.config({
   path: './.env',
@@ -44,6 +45,7 @@ app.use(cookieParser());
 
 // Routes
 app.use('/v1/wallet', walletRoute);
+app.use('/v1/category', categoryRoute);
 
 app.listen(PORT, async () => {
   try {

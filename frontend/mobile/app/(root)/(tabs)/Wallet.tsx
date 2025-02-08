@@ -22,7 +22,7 @@ const Wallet = () => {
   const { getToken } = useAuth();
 
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchWallets = async () => {
       if (!user) return;
       try {
         const clerkToken = await getToken();
@@ -46,7 +46,7 @@ const Wallet = () => {
       }
     };
 
-    fetchExpenses();
+    fetchWallets();
   }, [user]);
 
   const handleAddPress = () => {
@@ -76,7 +76,7 @@ const Wallet = () => {
               renderItem={({ item }) => (
                 <View className="bg-white p-4 rounded-lg shadow-md mb-2 border border-gray-300">
                   <Text className="text-lg font-semibold">{item.name}</Text>
-                  <Text className="text-md text-gray-600">Amount: ₹{item.balance}</Text>
+                  <Text className="text-md text-gray-600">Balance: ₹{item.balance}</Text>
                 </View>
               )}
             />
