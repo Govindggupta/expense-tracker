@@ -2,34 +2,45 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { STATUS } from '../constants/status.js';
 import { Decimal } from 'decimal.js';
+import { getAuth } from '@clerk/express';
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+      };
+    }
+  }
+}
 
 const prisma = new PrismaClient();
 // create expense
 export const createExpenses = async (req: Request, res: Response) => {
   try {
-    const { amount, description, attachmentUrl, categoryId, userId, walletId, type } = req.body;
-    // const userId = req.user?.id; // Assuming user ID is attached to the request by middleware
+    const { amount, description, attachmentUrl, categoryId, walletId, type } = req.body;
+    const { userId } = getAuth(req);
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
-      return; 
+      return;
     }
 
     if (!amount || isNaN(Number(amount))) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Amount is required' });
-      return; 
+      return;
     }
     if (!categoryId) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Category is required' });
-      return; 
+      return;
     }
     if (!walletId) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Wallet is required' });
-      return; 
+      return;
     }
     if (!['EXPENSE', 'INCOME'].includes(type)) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'Type must be either EXPENSE or INCOME' });
-      return; 
+      return;
     }
 
     const wallet = await prisma.wallet.findUnique({
@@ -38,7 +49,7 @@ export const createExpenses = async (req: Request, res: Response) => {
 
     if (!wallet) {
       res.status(STATUS.NOT_FOUND).json({ message: 'Wallet not found' });
-      return; 
+      return;
     }
 
     const newBalance =
@@ -70,21 +81,21 @@ export const createExpenses = async (req: Request, res: Response) => {
     res.status(STATUS.CREATED).json({ expense: newExpense });
   } catch (error) {
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
+    return;
   }
 };
 
 // Fetch all user expenses
 export const getAllExpenses = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
-    // const userId = req.user?.id;
+    const { userId } = getAuth(req);
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
     }
 
     const expenses = await prisma.expense.findMany({
-      where: { userId },
+      where: { userId: userId as string },
     });
 
     res.status(STATUS.OK).json({ expenses });

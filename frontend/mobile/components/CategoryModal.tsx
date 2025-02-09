@@ -80,22 +80,21 @@ const CategoryModal: React.FC<CategoryModalProps> = ({
             <Text className="text-red-500 text-center">{error}</Text>
           ) : (
             <FlatList
-            data={filteredCategories}
+              data={filteredCategories}
+              numColumns={3}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  className="bg-blue-100 p-2 rounded-lg shadow-md mb-3 border border-blue-400 flex-row items-center justify-between w-full"
+                  className="w-24 h-24 rounded-lg flex items-center justify-center m-2 mb-5 mt-4"
                   onPress={() => {
                     onSelectCategory({ id: item.id, name: item.name[0] });
                     onClose();
                   }}
                 >
-                  <View className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center">
-                    <Text className="text-lg font-semibold">{item.name[0]}</Text>
+                  <View className="w-20 h-20 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <Text className="text-lg font-bold text-gray-900">{item.name[0]}</Text>
                   </View>
-                  <View className="flex-1 ml-4">
-                    <Text className="text-xl font-semibold text-gray-900">{item.name}</Text>
-                  </View>
+                  <Text className="text-sm text-gray-600 mt-2 text-center">{item.name}</Text>
                 </TouchableOpacity>
               )}
             />
