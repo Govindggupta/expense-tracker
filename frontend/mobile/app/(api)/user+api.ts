@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       for (const category of [...expenseCategories, ...incomeCategories]) {
         await sql`
           INSERT INTO "Category" (id, "userId", name, type)
-          VALUES (${uuidv4()}, ${userClerkId}, ${category.name}, ${category.type}::"ExpenseType")
+          VALUES (${uuidv4()}, ${userClerkId}, ${category.name}, ${category.type})
         `;
       }
     }
