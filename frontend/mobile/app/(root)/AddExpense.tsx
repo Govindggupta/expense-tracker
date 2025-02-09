@@ -14,8 +14,18 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
+import WalletModal from '@/components/WalletModal';
+import CategoryModal from '@/components/CategoryModal';
 
 const AddExpense = () => {
+  const [isWalletModalVisible, setWalletModalVisible] = useState(false);
+  const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
+
+  const [selectedWallet, setSelectedWallet] = useState<{ id: string; name: string } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(
+    null,
+  );
+
   const [selectedOption, setSelectedOption] = useState('Expense');
   const [note, setNote] = useState('');
   const [inputValue, setInputValue] = useState('');
@@ -107,12 +117,47 @@ const AddExpense = () => {
           <TouchableOpacity className="w-16 h-16 justify-center items-center border border-blue-400 bg-blue-100 rounded-xl">
             <Ionicons name="attach" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl">
-            <Ionicons name="wallet" size={24} color="black" />
+
+          <TouchableOpacity
+            className="flex-1 h-16 w-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl"
+            onPress={() => setWalletModalVisible(true)}
+          >
+            {selectedWallet ? (
+              <Text className="text-md font-bold">{selectedWallet.name}</Text>
+            ) : (
+              <Ionicons name="wallet" size={24} color="black" />
+            )}
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl">
-            <Ionicons name="pricetag" size={24} color="black" />
+
+          <WalletModal
+            isVisible={isWalletModalVisible}
+            onClose={() => setWalletModalVisible(false)}
+            onSelectWallet={(wallet) => {
+              setSelectedWallet(wallet);
+              setWalletModalVisible(false);
+            }}
+          />
+
+          <TouchableOpacity
+            className="flex-1 h-16 w-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl"
+            onPress={() => setCategoryModalVisible(true)}
+          >
+            {selectedCategory ? (
+              <Text className="text-md font-bold">{selectedCategory.name}</Text>
+            ) : (
+              <Ionicons name="pricetag" size={24} color="black" />
+            )}
           </TouchableOpacity>
+
+          <CategoryModal
+            isVisible={isCategoryModalVisible}
+            onClose={() => setCategoryModalVisible(false)}
+            onSelectCategory={(category) => {
+              setSelectedCategory(category);
+              setCategoryModalVisible(false);
+            }}
+            selectedOption={selectedOption}
+          />
         </View>
 
         {/* Note Input */}
