@@ -1,10 +1,11 @@
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddButton from '@/components/AddButton';
 import { router } from 'expo-router';
 import { SignedIn, useAuth, useUser } from '@clerk/clerk-expo';
 import axios from 'axios';
+import { Entypo } from '@expo/vector-icons';
 
 interface Category {
   id: string;
@@ -52,7 +53,7 @@ const Categories = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 p-5 bg-white">
+    <SafeAreaView className="flex-1 p-5 bg-gray-100">
       <SignedIn>
         {loading ? (
           <ActivityIndicator size="large" color="#2162DB" className="flex-1 justify-center" />
@@ -62,14 +63,17 @@ const Categories = () => {
           <FlatList
             data={categories}
             keyExtractor={(item) => item.id}
-            numColumns={3}
-            contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
             renderItem={({ item }) => (
-              <View className="items-center mx-5 my-3">
-                <View className="w-20 h-20 bg-gray-300 rounded-2xl flex items-center justify-center shadow-md">
-                  <Text className="text-white text-lg font-semibold">{item.name[0]}</Text>
+              <View className="bg-blue-100 p-2 rounded-lg shadow-md mb-3 border border-blue-400 flex-row items-center justify-between w-full">
+                <View className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center">
+                  <Text className="text-lg font-semibold">{item.name[0]}</Text>
                 </View>
-                <Text className="mt-2 text-center text-gray-800 font-medium">{item.name}</Text>
+                <View className="flex-1 ml-4">
+                  <Text className="text-xl font-semibold text-gray-900">{item.name}</Text>
+                </View>
+                <TouchableOpacity className="p-1">
+                  <Entypo size={20} name="dots-three-horizontal" color={'#0E3789'} />
+                </TouchableOpacity>
               </View>
             )}
           />

@@ -1,4 +1,4 @@
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddButton from '@/components/AddButton';
@@ -49,6 +49,10 @@ const Wallet = () => {
     fetchWallets();
   }, [user]);
 
+  const handleWallet = () => {
+    // code
+  };
+
   const handleAddPress = () => {
     router.replace('/(root)/AddExpense');
   };
@@ -57,14 +61,6 @@ const Wallet = () => {
     <SafeAreaView className="h-full p-5 w-full">
       <SignedIn>
         <View className="w-full flex gap-3">
-          <View className="WALLET w-full h-fit bg-gray-200 border border-black rounded-lg p-2 flex-row justify-between items-center px-4">
-            <View>
-              <Text className="text-xl">Cash</Text>
-              <Text className="text-md">Balance: 100000000000</Text>
-            </View>
-            <Entypo size={20} name="dots-three-horizontal" />
-          </View>
-
           {loading ? (
             <ActivityIndicator size="large" color="#2162DB" />
           ) : error ? (
@@ -74,9 +70,19 @@ const Wallet = () => {
               data={wallet}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
-                <View className="bg-white p-4 rounded-lg shadow-md mb-2 border border-gray-300">
-                  <Text className="text-lg font-semibold">{item.name}</Text>
-                  <Text className="text-md text-gray-600">Balance: ₹{item.balance}</Text>
+                <View className="bg-blue-100 p-4 rounded-lg shadow-md mb-3 border border-blue-400 flex-row items-center justify-between">
+                  <View className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center">
+                    <Text className="text-md font-bold">Img</Text>
+                  </View>
+                  <View className="flex-1 ml-4">
+                    <Text className="text-xl font-semibold text-gray-900">{item.name}</Text>
+                    <Text className="text-lg text-gray-600">
+                      Balance: <Text className="text-green-500 font-bold">₹{item.balance}</Text>
+                    </Text>
+                  </View>
+                  <TouchableOpacity onPress={handleWallet} className="p-1">
+                    <Entypo size={20} name="dots-three-horizontal" color={'#0E3789'} />
+                  </TouchableOpacity>
                 </View>
               )}
             />
