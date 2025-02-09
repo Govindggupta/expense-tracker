@@ -1,8 +1,19 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { STATUS } from '../constants/status.js';
+import { getAuth } from '@clerk/express';
 
 const prisma = new PrismaClient();
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+      };
+    }
+  }
+}
 
 // Create a new wallet
 export const createWallet = async (req: Request, res: Response) => {
@@ -10,8 +21,8 @@ export const createWallet = async (req: Request, res: Response) => {
     const { userId, name, balance, currency } = req.body;
 
     if (!userId || !name) {
-       res.status(STATUS.BAD_REQUEST).json({ message: 'User ID and name are required' });
-       return
+      res.status(STATUS.BAD_REQUEST).json({ message: 'User ID and name are required' });
+      return;
     }
 
     const newWallet = await prisma.wallet.create({
@@ -32,11 +43,12 @@ export const createWallet = async (req: Request, res: Response) => {
 // Fetch all wallets
 export const getAllWallets = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
+    // const { userId } = req.body;
+    const { userId } = getAuth(req);
 
     if (!userId) {
-       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
-       return
+      res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      return;
     }
 
     const wallets = await prisma.wallet.findMany({

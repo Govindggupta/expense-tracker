@@ -77,15 +77,15 @@ const AddExpense = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      className="flex-1 bg-white"
     >
-      <View className="flex-1 p-5">
+      <View className="flex-1 p-5 max-w-xl mx-auto">
         {/* Income and Expense Options */}
-        <View className="flex-row justify-center gap-20 mb-5 mt-3">
+        <View className="flex-row justify-center gap-20 mb-3 mt-2">
           <TouchableOpacity onPress={() => handleOptionSelect('Income')}>
             <Text
               className={`text-xl p-2 ${
-                selectedOption === 'Income' ? 'font-bold text-blue-500' : ''
+                selectedOption === 'Income' ? 'font-bold text-blue-500' : 'text-gray-500'
               }`}
             >
               Income
@@ -94,7 +94,7 @@ const AddExpense = () => {
           <TouchableOpacity onPress={() => handleOptionSelect('Expense')}>
             <Text
               className={`text-xl p-2 ${
-                selectedOption === 'Expense' ? 'font-bold text-blue-500' : ''
+                selectedOption === 'Expense' ? 'font-bold text-blue-500' : 'text-gray-500'
               }`}
             >
               Expense
@@ -103,45 +103,49 @@ const AddExpense = () => {
         </View>
 
         {/* Icon Boxes */}
-        <View className="flex-row justify-center mb-3 gap-2 w-full">
-          <TouchableOpacity className="w-16 h-16 justify-center items-center border border-gray-400 rounded-xl">
+        <View className="flex-row justify-center mb-2 gap-2 w-full">
+          <TouchableOpacity className="w-16 h-16 justify-center items-center border border-blue-400 bg-blue-100 rounded-xl">
             <Ionicons name="attach" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 rounded-xl">
+          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl">
             <Ionicons name="wallet" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 rounded-xl">
+          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl">
             <Ionicons name="pricetag" size={24} color="black" />
           </TouchableOpacity>
         </View>
 
         {/* Note Input */}
         <TextInput
-          className="border border-gray-400 rounded-xl h-40 p-2 mb-3"
+          className="border border-gray-400 bg-gray-100 rounded-xl h-40 p-3 mb-2 text-gray-800"
           placeholder="Add a note"
+          placeholderTextColor="#6b7280"
           value={note}
           onChangeText={setNote}
+          multiline
         />
 
         {/* Numpad */}
         <View className="mb-3">
-          <View className="flex-row justify-between items-center mb-3 border border-gray-400 rounded-lg h-20">
-            <Text className="text-4xl m-5 font-semibold">{inputValue}</Text>
+          <View className="flex-row justify-between items-center mb-2 border border-gray-400 bg-gray-100 rounded-lg h-20 p-5">
+            <Text className="text-4xl font-semibold text-gray-900">{inputValue}</Text>
             <TouchableOpacity onPress={handleUndo} onLongPress={handleLongPress}>
-              <Ionicons className="mr-4" name="backspace" size={27} color="black" />
+              <Ionicons name="backspace" size={27} color="black" />
             </TouchableOpacity>
           </View>
           {['123+', '456-', '789x', '=0.÷'].map((row, rowIndex) => (
-            <View key={rowIndex} className="flex-row justify-between mb-3 pl-5 pr-5">
+            <View key={rowIndex} className="flex-row justify-between mb-1">
               {row.split('').map((item) => (
                 <TouchableOpacity
                   key={item}
-                  className={`w-20 h-20 justify-center items-center border border-gray-400 rounded-lg ${
-                    ['+', '-', 'x', '÷', '='].includes(item) ? 'bg-gray-300' : ''
+                  className={`w-[22vw] h-[10vh] justify-center items-center border border-gray-400 rounded-lg ${
+                    ['+', '-', 'x', '÷', '='].includes(item)
+                      ? 'bg-blue-100 border-blue-400'
+                      : 'bg-gray-100'
                   }`}
                   onPress={() => handleNumpadPress(item)}
                 >
-                  <Text className="text-lg">{item}</Text>
+                  <Text className="text-2xl font-medium text-gray-900">{item}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -149,18 +153,18 @@ const AddExpense = () => {
         </View>
 
         {/* Save and Cancel Buttons */}
-        <View className="flex-row justify-between mb-3">
+        <View className="flex-row justify-between mb-2">
           <TouchableOpacity
-            className="flex-1 mx-1 p-3 bg-blue-500 rounded-lg justify-center items-center"
+            className="flex-1 mx-1 p-4 bg-green-500 rounded-lg justify-center items-center"
             onPress={handleSave}
           >
-            <Text className="text-white text-lg">Save</Text>
+            <Text className="text-white text-lg font-semibold">Save</Text>
           </TouchableOpacity>
           <Link
             href="/"
-            className="flex-1 mx-1 p-3 bg-gray-500 rounded-lg justify-center items-center"
+            className="flex-1 mx-1 p-4 bg-red-500 rounded-lg justify-center items-center"
           >
-            <Text className="text-white text-lg text-center">Cancel</Text>
+            <Text className="text-white text-lg font-semibold text-center">Cancel</Text>
           </Link>
         </View>
 

@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
 import { STATUS } from '../constants/status.js';
+import { getAuth } from '@clerk/express';
 
 const prisma = new PrismaClient();
 
 // Fetch all categories (predefined and user-specific)
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
-    // const userId = req.user?.id;
-    const {userId} = req.body;
+    const { userId } = getAuth(req);
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
