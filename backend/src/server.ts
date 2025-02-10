@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import walletRoute from './routes/wallet.route.js';
 import categoryRoute from './routes/category.route.js';
+import ExpenseRoute from './routes/expenses.route.js';
 
 dotenv.config({
   path: './.env',
@@ -44,6 +45,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Routes
+app.use('/v1/expenses', ExpenseRoute);
 app.use('/v1/wallet', walletRoute);
 app.use('/v1/category', categoryRoute);
 

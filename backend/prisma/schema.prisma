@@ -20,47 +20,47 @@ model User {
 }
 
 model Expense {
-  id            String   @id @default(uuid())
+  id            String      @id @default(uuid())
   userId        String
   amount        Decimal
   categoryId    String
   walletId      String
   description   String?
-  date          DateTime @default(now())
+  date          DateTime    @default(now())
   attachmentUrl String?
-  createdAt     DateTime @default(now())
-  type          ExpenseType @default(EXPENSE)
+  createdAt     DateTime    @default(now())
+  type          TYPE @default(EXPENSE)
 
   // relationships
   user     User     @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
   Category Category @relation(fields: [categoryId], references: [id])
-  Wallet   Wallet  @relation(fields: [walletId], references: [id])
+  Wallet   Wallet   @relation(fields: [walletId], references: [id])
 }
 
-enum ExpenseType {
+enum TYPE {
   EXPENSE
   INCOME
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  userId    String? // Optional custom categories per user
-  createdAt DateTime @default(now())
+  id        String      @id @default(uuid())
+  name      String      
+  userId    String
+  createdAt DateTime    @default(now())
+  type      TYPE @default(EXPENSE)
 
   // Relationships
-  user     User?     @relation(fields: [userId], references: [clerk_id], onDelete: SetNull)
+  user     User      @relation(fields: [userId], references: [clerk_id])
   expenses Expense[]
 }
 
 model Wallet {
-  id        String   @id @default(uuid())
-  userId    String   
+  id        String    @id @default(uuid())
+  userId    String
   name      String
   balance   Decimal
-  createdAt DateTime @default(now())
-
+  createdAt DateTime  @default(now())
   // Relationships
-  user     User      @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
-  expenses Expense[]
+  user      User      @relation(fields: [userId], references: [clerk_id], onDelete: Cascade)
+  expenses  Expense[]
 }

@@ -18,8 +18,7 @@ export const getAllCategories = async (req: Request, res: Response) => {
     const categories = await prisma.category.findMany({
       where: {
         OR: [
-          { userId: null }, // Predefined categories
-          { userId }, // User-specific categories
+          { userId }, 
         ],
       },
     });

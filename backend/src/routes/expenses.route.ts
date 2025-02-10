@@ -1,5 +1,5 @@
 import express from 'express';
-// import { protectedRoute } from '../middleware/protectedRoute.js';
+import { requireAuth } from '@clerk/express';
 import {
   createExpenses,
   getAllExpenses,
@@ -10,10 +10,10 @@ import {
 
 const router = express.Router();
 
-router.post('/', createExpenses);
-router.get('/', getAllExpenses);
-router.get('/:id', getExpenseById);
-router.put('/:id', updateExpense);
-router.delete('/:id', deleteExpense);
+router.post('/', requireAuth(), createExpenses);
+router.get('/', requireAuth(), getAllExpenses);
+router.get('/:id', requireAuth(), getExpenseById);
+router.put('/:id', requireAuth(), updateExpense);
+router.delete('/:id', requireAuth(), deleteExpense);
 
 export default router;

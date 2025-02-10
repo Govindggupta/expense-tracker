@@ -1,8 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { v4 as uuidv4 } from 'uuid';
 
-const walletId = uuidv4();
-
 export async function POST(request: Request) {
   try {
     const sql = neon(`${process.env.DATABASE_URL}`);
@@ -31,10 +29,31 @@ export async function POST(request: Request) {
 
       // Create a default wallet for the new user
       await sql`
-        INSERT INTO "Wallet" (id, "userId", name, balance )
-        VALUES (${walletId}, ${userClerkId}, 'Cash', 0)
-        RETURNING id;
+        INSERT INTO "Wallet" (id, "userId", name, balance)
+        VALUES (${uuidv4()}, ${userClerkId}, 'Cash', 0)
       `;
+
+      // Predefined categories: Minimum 5 Expense and 3 Income categories
+      const expenseCategories = [
+        { name: 'Food', type: 'EXPENSE' },
+        { name: 'Transport', type: 'EXPENSE' },
+        { name: 'Utilities', type: 'EXPENSE' },
+        { name: 'Entertainment', type: 'EXPENSE' },
+        { name: 'Healthcare', type: 'EXPENSE' },
+      ];
+
+      const incomeCategories = [
+        { name: 'Salary', type: 'INCOME' },
+        { name: 'Freelancing', type: 'INCOME' },
+        { name: 'Investments', type: 'INCOME' },
+      ];
+
+      for (const category of [...expenseCategories, ...incomeCategories]) {
+        await sql`
+          INSERT INTO "Category" (id, "userId", name, type)
+          VALUES (${uuidv4()}, ${userClerkId}, ${category.name}, ${category.type})
+        `;
+      }
     }
 
     return new Response(JSON.stringify({ clerkId: userClerkId }), { status: 201 });
@@ -43,6 +62,7 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
   }
 }
+
 
 // // THIS IS FOR CONNECTING THE LOCAL POSTGRES DB
 

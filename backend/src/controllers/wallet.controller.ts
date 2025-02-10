@@ -18,7 +18,7 @@ declare global {
 // Create a new wallet
 export const createWallet = async (req: Request, res: Response) => {
   try {
-    const { userId, name, balance, currency } = req.body;
+    const { userId, name, balance } = req.body;
 
     if (!userId || !name) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'User ID and name are required' });
@@ -29,8 +29,7 @@ export const createWallet = async (req: Request, res: Response) => {
       data: {
         userId,
         name,
-        balance: balance || 0,
-        currency: currency || 'INR',
+        balance: balance || 0
       },
     });
 
@@ -69,7 +68,7 @@ export const updateWallet = async (req: Request, res: Response) => {
 
     const updatedWallet = await prisma.wallet.update({
       where: { id },
-      data: { name, balance, currency },
+      data: { name, balance },
     });
 
     res.status(STATUS.OK).json({ wallet: updatedWallet });

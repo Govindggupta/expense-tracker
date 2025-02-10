@@ -14,11 +14,26 @@ import { Ionicons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
+import WalletModal from '@/components/WalletModal';
+import CategoryModal from '@/components/CategoryModal';
+import { useUser, useAuth } from '@clerk/clerk-expo';
+import axios from 'axios';
 
 const AddExpense = () => {
+  const [isWalletModalVisible, setWalletModalVisible] = useState(false);
+  const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
+
+  const [selectedWallet, setSelectedWallet] = useState<{ id: string; name: string } | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(
+    null,
+  );
+
   const [selectedOption, setSelectedOption] = useState('Expense');
   const [note, setNote] = useState('');
   const [inputValue, setInputValue] = useState('');
+
+  const { user } = useUser();
+  const { getToken } = useAuth();
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
@@ -57,8 +72,55 @@ const AddExpense = () => {
     setInputValue((prev) => prev.slice(0, 0));
   };
 
-  const handleSave = () => {
-    // Handle save logic
+  const handleSave = async () => {
+    if (!selectedWallet || !selectedCategory || !inputValue) {
+      Alert.alert('Missing Fields', 'Please fill in all fields.');
+      return;
+    }
+
+    try {
+      const clerkToken = await getToken();
+      if (!clerkToken) {
+        Alert.alert('Authentication Error', 'Please log in again.');
+        return;
+      }
+
+      const formattedAmount = parseFloat(inputValue.replace(/[^0-9.]/g, ''));
+      if (isNaN(formattedAmount) || formattedAmount <= 0) {
+        Alert.alert('Invalid Amount', 'Please enter a valid number.');
+        return;
+      }
+
+      const type = selectedOption.toUpperCase();
+
+      const expenseData = {
+        userId: user?.id,
+        amount: formattedAmount,
+        description: note,
+        attachmentUrl: '',
+        categoryId: selectedCategory.id,
+        walletId: selectedWallet.id,
+        type,
+      };
+
+      const response = await axios.post('http://192.168.29.74:8000/v1/expenses/', expenseData, {
+        headers: {
+          Authorization: `Bearer ${clerkToken}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+      });
+
+      Alert.alert('Success', 'Expense added successfully!');
+      setInputValue('');
+      setNote('');
+      setSelectedWallet(null);
+      setSelectedCategory(null);
+      router.replace('/');
+    } catch (error) {
+      console.error('Error saving expense:', error);
+      Alert.alert('Error', 'Failed to add expense. Please try again.');
+    }
   };
 
   useFocusEffect(
@@ -107,12 +169,47 @@ const AddExpense = () => {
           <TouchableOpacity className="w-16 h-16 justify-center items-center border border-blue-400 bg-blue-100 rounded-xl">
             <Ionicons name="attach" size={24} color="black" />
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl">
-            <Ionicons name="wallet" size={24} color="black" />
+
+          <TouchableOpacity
+            className="flex-1 h-16 w-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl"
+            onPress={() => setWalletModalVisible(true)}
+          >
+            {selectedWallet ? (
+              <Text className="text-md font-bold">{selectedWallet.name}</Text>
+            ) : (
+              <Ionicons name="wallet" size={24} color="black" />
+            )}
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 h-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl">
-            <Ionicons name="pricetag" size={24} color="black" />
+
+          <WalletModal
+            isVisible={isWalletModalVisible}
+            onClose={() => setWalletModalVisible(false)}
+            onSelectWallet={(wallet) => {
+              setSelectedWallet(wallet);
+              setWalletModalVisible(false);
+            }}
+          />
+
+          <TouchableOpacity
+            className="flex-1 h-16 w-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl"
+            onPress={() => setCategoryModalVisible(true)}
+          >
+            {selectedCategory ? (
+              <Text className="text-md font-bold">{selectedCategory.name}</Text>
+            ) : (
+              <Ionicons name="pricetag" size={24} color="black" />
+            )}
           </TouchableOpacity>
+
+          <CategoryModal
+            isVisible={isCategoryModalVisible}
+            onClose={() => setCategoryModalVisible(false)}
+            onSelectCategory={(category) => {
+              setSelectedCategory(category);
+              setCategoryModalVisible(false);
+            }}
+            selectedOption={selectedOption}
+          />
         </View>
 
         {/* Note Input */}
