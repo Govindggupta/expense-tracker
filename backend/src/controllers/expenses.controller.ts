@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { STATUS } from '../constants/status.js';
 import { Decimal } from 'decimal.js';
 import { getAuth } from '@clerk/express';
+import { deleteCategory } from './category.controller.js';
 
 declare global {
   namespace Express {
@@ -91,18 +92,36 @@ export const getAllExpenses = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
 
     if (!userId) {
-      res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
+       res.status(STATUS.UNAUTHORIZED).json({ message: "User not authenticated" })
+       return;
     }
 
+    // Fetch all expenses along with category name
     const expenses = await prisma.expense.findMany({
-      where: { userId: userId as string },
+      where: { userId },
+      include: {
+        Category: {
+          select: {
+            name: true, // Fetch only the category name from the Category model
+          },
+        },
+      },
     });
 
-    res.status(STATUS.OK).json({ expenses });
+    // Modify response to include category name directly
+    const formattedExpenses = expenses.map((expense) => ({
+      ...expense,
+      categoryName: expense.Category?.name, // Ensure category exists before accessing name
+    }));
+
+    res.status(STATUS.OK).json({ expenses: formattedExpenses });
   } catch (error) {
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
+    res
+      .status(STATUS.INTERNAL_SERVER_ERROR)
+      .json({ message: "Internal Server Error", error });
   }
 };
+
 
 // Get a single expense
 export const getExpenseById = async (req: Request, res: Response) => {

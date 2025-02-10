@@ -44,7 +44,7 @@ enum TYPE {
 
 model Category {
   id        String      @id @default(uuid())
-  name      String      @unique
+  name      String      
   userId    String
   createdAt DateTime    @default(now())
   type      TYPE @default(EXPENSE)

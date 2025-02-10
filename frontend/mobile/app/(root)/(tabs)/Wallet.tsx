@@ -76,9 +76,12 @@ const Wallet = () => {
                   </View>
                   <View className="flex-1 ml-4">
                     <Text className="text-xl font-semibold text-gray-900">{item.name}</Text>
-                    <Text className="text-lg text-gray-600">
-                      Balance: <Text className="text-green-500 font-bold">₹{item.balance}</Text>
+                    <Text className={"text-lg text-gray-600"}>
+                      Balance: <Text className={`${item.balance < 0 ? "text-red-500" : "text-green-500"} font-bold`}>
+                        ₹{item.balance}
+                      </Text>
                     </Text>
+
                   </View>
                   <TouchableOpacity onPress={handleWallet} className="p-1">
                     <Entypo size={20} name="dots-three-horizontal" color={'#0E3789'} />
