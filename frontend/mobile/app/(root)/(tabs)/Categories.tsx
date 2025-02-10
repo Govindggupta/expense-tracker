@@ -31,7 +31,7 @@ const Categories = () => {
           return;
         }
 
-        const response = await axios.get('http://192.168.29.74:8000/v1/category/', {
+        const response = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/category/', {
           headers: {
             Authorization: `Bearer ${clerkToken}`,
           },

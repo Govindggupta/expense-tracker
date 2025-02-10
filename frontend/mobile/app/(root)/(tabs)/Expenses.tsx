@@ -28,7 +28,7 @@ const Expenses = () => {
     const fetchExpenses = async () => {
       try {
         const token = await getToken();
-        const response = await axios.get('http://192.168.29.74:8000/v1/expenses/', {
+        const response = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/expenses/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

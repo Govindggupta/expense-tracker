@@ -103,7 +103,7 @@ const AddExpense = () => {
         type,
       };
 
-      const response = await axios.post('http://192.168.29.74:8000/v1/expenses/', expenseData, {
+      const response = await axios.post('https://expense-tracker-ldy5.onrender.com/v1/expenses/', expenseData, {
         headers: {
           Authorization: `Bearer ${clerkToken}`,
           'Content-Type': 'application/json',
