@@ -18,15 +18,18 @@ import WalletModal from '@/components/WalletModal';
 import CategoryModal from '@/components/CategoryModal';
 import { useUser, useAuth } from '@clerk/clerk-expo';
 import axios from 'axios';
+import DatePickerModal from '@/components/DatePickerModal';
 
 const AddExpense = () => {
   const [isWalletModalVisible, setWalletModalVisible] = useState(false);
   const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
   const [selectedWallet, setSelectedWallet] = useState<{ id: string; name: string } | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(
     null,
   );
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const [selectedOption, setSelectedOption] = useState('Expense');
   const [note, setNote] = useState('');
@@ -101,21 +104,27 @@ const AddExpense = () => {
         categoryId: selectedCategory.id,
         walletId: selectedWallet.id,
         type,
+        date: selectedDate.toISOString(),
       };
 
-      const response = await axios.post('https://expense-tracker-ldy5.onrender.com/v1/expenses/', expenseData, {
-        headers: {
-          Authorization: `Bearer ${clerkToken}`,
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
+      const response = await axios.post(
+        'https://expense-tracker-ldy5.onrender.com/v1/expenses/',
+        expenseData,
+        {
+          headers: {
+            Authorization: `Bearer ${clerkToken}`,
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
         },
-      });
+      );
 
       Alert.alert('Success', 'Expense added successfully!');
       setInputValue('');
       setNote('');
       setSelectedWallet(null);
       setSelectedCategory(null);
+      setSelectedDate(new Date());
       router.replace('/');
     } catch (error) {
       console.error('Error saving expense:', error);
@@ -267,10 +276,20 @@ const AddExpense = () => {
 
         {/* Date and Month */}
         <View className="items-center">
-          <Text className="text-lg font-semibold text-gray-600">
-            Date: {new Date().toLocaleDateString()}
-          </Text>
+          <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
+            <Text className="text-lg font-semibold text-gray-600">
+              Date: {selectedDate.toLocaleDateString()}
+            </Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Date Picker Modal */}
+        <DatePickerModal
+          isVisible={isDatePickerVisible}
+          onClose={() => setDatePickerVisible(false)}
+          onDateSelect={(date) => setSelectedDate(date)}
+          initialDate={selectedDate}
+        />
       </View>
     </KeyboardAvoidingView>
   );

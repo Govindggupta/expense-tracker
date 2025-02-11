@@ -3,7 +3,6 @@ import { PrismaClient } from '@prisma/client';
 import { STATUS } from '../constants/status.js';
 import { Decimal } from 'decimal.js';
 import { getAuth } from '@clerk/express';
-import { deleteCategory } from './category.controller.js';
 
 declare global {
   namespace Express {
@@ -19,7 +18,7 @@ const prisma = new PrismaClient();
 // create expense
 export const createExpenses = async (req: Request, res: Response) => {
   try {
-    const { amount, description, attachmentUrl, categoryId, walletId, type } = req.body;
+    const { amount, description, attachmentUrl, categoryId, walletId, type, date } = req.body;
     const { userId } = getAuth(req);
 
     if (!userId) {
@@ -71,6 +70,7 @@ export const createExpenses = async (req: Request, res: Response) => {
         categoryId,
         walletId,
         type,
+        date: new Date(date),
       },
     });
 
@@ -92,8 +92,8 @@ export const getAllExpenses = async (req: Request, res: Response) => {
     const { userId } = getAuth(req);
 
     if (!userId) {
-       res.status(STATUS.UNAUTHORIZED).json({ message: "User not authenticated" })
-       return;
+      res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
+      return;
     }
 
     // Fetch all expenses along with category name
@@ -102,7 +102,7 @@ export const getAllExpenses = async (req: Request, res: Response) => {
       include: {
         Category: {
           select: {
-            name: true, // Fetch only the category name from the Category model
+            name: true,
           },
         },
       },
@@ -111,24 +111,21 @@ export const getAllExpenses = async (req: Request, res: Response) => {
     // Modify response to include category name directly
     const formattedExpenses = expenses.map((expense) => ({
       ...expense,
-      categoryName: expense.Category?.name, // Ensure category exists before accessing name
+      categoryName: expense.Category?.name,
+      date: expense.date.toISOString(),
     }));
 
     res.status(STATUS.OK).json({ expenses: formattedExpenses });
   } catch (error) {
-    res
-      .status(STATUS.INTERNAL_SERVER_ERROR)
-      .json({ message: "Internal Server Error", error });
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
   }
 };
-
 
 // Get a single expense
 export const getExpenseById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
-    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -152,7 +149,8 @@ export const getExpenseById = async (req: Request, res: Response) => {
 export const updateExpense = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { amount, description, attachmentUrl, categoryId, userId, walletId, type } = req.body;
+    const { amount, description, attachmentUrl, categoryId, userId, walletId, type, date } =
+      req.body;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -216,7 +214,7 @@ export const updateExpense = async (req: Request, res: Response) => {
 
     const updatedExpense = await prisma.expense.update({
       where: { id },
-      data: { amount, description, attachmentUrl, categoryId, walletId, type },
+      data: { amount, description, attachmentUrl, categoryId, walletId, type, date },
     });
 
     res.status(STATUS.OK).json({ expense: updatedExpense });
@@ -230,7 +228,6 @@ export const deleteExpense = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
-    // const userId = req.user?.id;
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
