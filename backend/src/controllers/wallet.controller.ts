@@ -18,7 +18,8 @@ declare global {
 // Create a new wallet
 export const createWallet = async (req: Request, res: Response) => {
   try {
-    const { userId, name, balance } = req.body;
+    const { name, balance } = req.body;
+    const { userId } = getAuth(req);
 
     if (!userId || !name) {
       res.status(STATUS.BAD_REQUEST).json({ message: 'User ID and name are required' });
@@ -29,7 +30,7 @@ export const createWallet = async (req: Request, res: Response) => {
       data: {
         userId,
         name,
-        balance: balance || 0
+        balance: balance || 0,
       },
     });
 
