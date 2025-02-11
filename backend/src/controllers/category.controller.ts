@@ -65,15 +65,14 @@ export const createCategory = async (req: Request, res: Response) => {
 export const updateCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, userId } = req.body;
-    // const userId = req.user?.id;
+    const { name } = req.body;
 
-    if (!userId) {
+    if (!id) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
     }
 
     const updatedCategory = await prisma.category.update({
-      where: { id, userId },
+      where: { id },
       data: { name },
     });
 
@@ -87,15 +86,13 @@ export const updateCategory = async (req: Request, res: Response) => {
 export const deleteCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { userId } = req.body;
-    // const userId = req.user?.id;
 
-    if (!userId) {
+    if (!id) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
     }
 
     await prisma.category.delete({
-      where: { id, userId },
+      where: { id },
     });
 
     res.status(STATUS.OK).json({ message: 'Category deleted successfully' });

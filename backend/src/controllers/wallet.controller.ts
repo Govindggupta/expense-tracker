@@ -65,7 +65,7 @@ export const getAllWallets = async (req: Request, res: Response) => {
 export const updateWallet = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, balance, currency } = req.body;
+    const { name, balance } = req.body;
 
     const updatedWallet = await prisma.wallet.update({
       where: { id },
