@@ -5,6 +5,16 @@ import { getAuth } from '@clerk/express';
 
 const prisma = new PrismaClient();
 
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+      };
+    }
+  }
+}
+
 // Fetch all categories (predefined and user-specific)
 export const getAllCategories = async (req: Request, res: Response) => {
   try {
@@ -17,9 +27,7 @@ export const getAllCategories = async (req: Request, res: Response) => {
 
     const categories = await prisma.category.findMany({
       where: {
-        OR: [
-          { userId }, 
-        ],
+        OR: [{ userId }],
       },
     });
 
@@ -32,8 +40,8 @@ export const getAllCategories = async (req: Request, res: Response) => {
 // Create a new category
 export const createCategory = async (req: Request, res: Response) => {
   try {
-    const { name, userId } = req.body;
-    // const userId = req.user?.id;
+    const { name, type } = req.body;
+    const { userId } = getAuth(req);
 
     if (!userId) {
       res.status(STATUS.UNAUTHORIZED).json({ message: 'User not authenticated' });
@@ -41,8 +49,9 @@ export const createCategory = async (req: Request, res: Response) => {
 
     const newCategory = await prisma.category.create({
       data: {
+        userId: userId as string,
         name,
-        userId,
+        type,
       },
     });
 
