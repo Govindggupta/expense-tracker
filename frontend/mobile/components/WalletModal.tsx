@@ -35,7 +35,7 @@ const WalletModal: React.FC<WalletModalProps> = ({ isVisible, onClose, onSelectW
           return;
         }
 
-        const response = await axios.get('http://192.168.29.74:8000/v1/wallet/', {
+        const response = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/wallet/', {
           headers: {
             Authorization: `Bearer ${clerkToken}`,
           },

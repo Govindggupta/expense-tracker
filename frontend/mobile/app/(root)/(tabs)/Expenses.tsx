@@ -6,7 +6,23 @@ import axios from 'axios';
 import { useAuth } from '@clerk/clerk-expo';
 import AddButton from '@/components/AddButton';
 import { router } from 'expo-router';
-import { Feather, Entypo } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
+
+// Function to format the date
+const formatDate = (isoDate: string) => {
+  const date = new Date(isoDate);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+};
 
 type Expense = {
   id: string;
@@ -28,7 +44,7 @@ const Expenses = () => {
     const fetchExpenses = async () => {
       try {
         const token = await getToken();
-        const response = await axios.get('http://192.168.29.74:8000/v1/expenses/', {
+        const response = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/expenses/', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -49,10 +65,6 @@ const Expenses = () => {
     router.replace('/(root)/AddExpense');
   };
 
-  const handleExpenses = () => {
-    // code
-  };
-
   return (
     <SafeAreaView className="flex-1 p-1 bg-white">
       <SignedIn>
@@ -71,31 +83,29 @@ const Expenses = () => {
               data={expenses}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <View className="bg-blue-100 rounded-xl shadow-md p-1 px-3 mb-3 mx-2 flex-row items-center justify-between">
-
+                <View className="bg-blue-100 rounded-xl shadow-md p-3 mb-3 mx-2 flex-row items-center justify-between">
+                  
                   {/* Category Icon (First letter of categoryName) */}
                   <View className="w-12 h-12 bg-white rounded-md flex items-center justify-center">
                     <Text className="text-lg font-bold">
                       {item.categoryName.charAt(0).toUpperCase()}
                     </Text>
                   </View>
+
+                  {/* Expense Details (Description, Date, and Category) */}
                   <View className="flex-1 ml-3">
-                    <Text className="text-sm font-medium text-gray-700">{item.description}</Text>
-                    <Text className="text-lg font-semibold text-gray-900">{item.categoryName}</Text>
-                    <Text className={`${item.type == 'INCOME' ? "text-green-500" : "text-red-500"} text-sm font-bold`}>
-                      ₹{item.amount}
-                    </Text>
+                    <Text className="text-lg font-medium text-gray-800">{item.categoryName}</Text>
+                    <Text className="text-sm text-gray-600">{formatDate(item.date)}</Text>
                   </View>
 
-                  {/* Options Button (Three Dots) */}
-                  <TouchableOpacity onPress={handleExpenses} className="p-2">
-                    <Entypo size={22} name="dots-three-horizontal" color={'#0E3789'} />
-                  </TouchableOpacity>
+                  {/* Amount on the right side */}
+                  <Text className={`${item.type == 'INCOME' ? "text-green-500" : "text-red-500"} text-lg font-bold`}>
+                    {item.type == 'INCOME' ? "+" : "-"} ₹{item.amount}
+                  </Text>
 
                 </View>
               )}
             />
-
           )}
         </View>
 
