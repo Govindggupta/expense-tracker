@@ -178,11 +178,14 @@ const Wallet = () => {
         return;
       }
 
-      const response = await axios.delete(`https://expense-tracker-ldy5.onrender.com/v1/wallet/${walletId}`, {
-        headers: {
-          Authorization: `Bearer ${clerkToken}`,
+      const response = await axios.delete(
+        `https://expense-tracker-ldy5.onrender.com/v1/wallet/${walletId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${clerkToken}`,
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         Alert.alert('Success', 'Wallet deleted successfully!');
@@ -253,7 +256,7 @@ const Wallet = () => {
                 renderItem={({ item }) => (
                   <View className="bg-blue-100 p-4 rounded-lg shadow-md mb-3 border border-blue-400 flex-row items-center justify-between">
                     <View className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center">
-                      <Text className="text-md font-bold">Img</Text>
+                      <Text className="text-md font-bold">{item.name[0]}</Text>
                     </View>
                     <View className="flex-1 ml-4">
                       <Text className="text-xl font-semibold text-gray-900">{item.name}</Text>
