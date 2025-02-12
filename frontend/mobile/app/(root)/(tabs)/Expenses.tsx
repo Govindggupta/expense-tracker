@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Text, View, ActivityIndicator, TouchableOpacity, Alert, SectionList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser, SignedIn } from '@clerk/clerk-expo';
@@ -8,6 +8,8 @@ import AddButton from '@/components/AddButton';
 import { router } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
 import ReactNativeModal from 'react-native-modal';
+import { ReloadContext } from '@/context/ReloadContext';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const formatDate = (isoDate: string) => {
   try {
@@ -74,6 +76,8 @@ const Expenses = () => {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  const { reload, triggerReload } = useContext(ReloadContext);
+
   useEffect(() => {
     const fetchExpenses = async () => {
       try {
@@ -99,7 +103,7 @@ const Expenses = () => {
     };
 
     fetchExpenses();
-  }, [user]);
+  }, [user, reload]);
 
   const handleAddPress = () => {
     router.replace('/(root)/AddExpense');
@@ -120,11 +124,14 @@ const Expenses = () => {
 
     try {
       const token = await getToken();
-      await axios.delete(`https://expense-tracker-ldy5.onrender.com/v1/expenses/${selectedExpense.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      await axios.delete(
+        `https://expense-tracker-ldy5.onrender.com/v1/expenses/${selectedExpense.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       setExpenses((prevExpenses) =>
         prevExpenses.filter((expense) => expense.id !== selectedExpense.id),
@@ -168,6 +175,7 @@ const Expenses = () => {
             </View>
           ) : (
             <SectionList
+              refreshControl={<RefreshControl refreshing={reload} onRefresh={triggerReload} />}
               contentContainerStyle={{ paddingBottom: 120 }}
               sections={groupedExpenses}
               keyExtractor={(item) => item.id}
