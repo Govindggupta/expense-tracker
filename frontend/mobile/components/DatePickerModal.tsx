@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import ReactNativeModal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -35,12 +35,11 @@ const DatePickerModal = ({
       animationOut="slideOutDown"
       style={{ justifyContent: 'center', alignItems: 'center' }}
     >
-      <View className="bg-white p-6 rounded-2xl w-4/5">
-        <Text className="text-lg font-semibold text-center mb-4">Select Date</Text>
+      <View className={`p-6 rounded-2xl w-2/2 ${Platform.OS === 'ios' ? 'bg-black' : ''}`}>
         <DateTimePicker
           value={selectedDate}
           mode="date"
-          display="spinner"
+          display= "inline"
           onChange={handleDateChange}
         />
       </View>

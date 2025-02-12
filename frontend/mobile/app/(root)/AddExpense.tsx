@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   Vibration,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { router } from 'expo-router';
 import WalletModal from '@/components/WalletModal';
@@ -20,23 +20,86 @@ import { useUser, useAuth } from '@clerk/clerk-expo';
 import axios from 'axios';
 import DatePickerModal from '@/components/DatePickerModal';
 
+type ExpenseData = {
+  id?: string;
+  amount: number;
+  description: string;
+  categoryId: string;
+  categoryName: string;
+  walletId: string;
+  walletName: string;
+  type: 'EXPENSE' | 'INCOME';
+  date: string;
+};
+
 const AddExpense = () => {
+  const params = useLocalSearchParams();
+  const isEdit = params.isEdit === 'true';
+  const existingExpense = useMemo(
+    () => (params.expense ? JSON.parse(params.expense as string) : null),
+    [params.expense],
+  );
+
   const [isWalletModalVisible, setWalletModalVisible] = useState(false);
   const [isCategoryModalVisible, setCategoryModalVisible] = useState(false);
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
 
-  const [selectedWallet, setSelectedWallet] = useState<{ id: string; name: string } | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(
-    null,
+  const [selectedWallet, setSelectedWallet] = useState<{ id: string; name: string } | null>(
+    isEdit && existingExpense
+      ? {
+          id: existingExpense.walletId,
+          name: existingExpense.walletName,
+        }
+      : null,
   );
-  const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const [selectedOption, setSelectedOption] = useState('Expense');
-  const [note, setNote] = useState('');
-  const [inputValue, setInputValue] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<{ id: string; name: string } | null>(
+    isEdit && existingExpense
+      ? {
+          id: existingExpense.categoryId,
+          name: existingExpense.categoryName,
+        }
+      : null,
+  );
+
+  const [selectedDate, setSelectedDate] = useState(
+    isEdit && existingExpense ? new Date(existingExpense.date) : new Date(),
+  );
+
+  const [selectedOption, setSelectedOption] = useState(
+    isEdit && existingExpense
+      ? existingExpense.type === 'INCOME'
+        ? 'Income'
+        : 'Expense'
+      : 'Expense',
+  );
+
+  const [note, setNote] = useState(isEdit && existingExpense ? existingExpense.description : '');
+
+  const [inputValue, setInputValue] = useState(
+    isEdit && existingExpense ? existingExpense.amount.toString() : '',
+  );
 
   const { user } = useUser();
   const { getToken } = useAuth();
+
+  // Initialize form with existing expense data if in edit mode
+  useEffect(() => {
+    if (isEdit && existingExpense) {
+      setSelectedOption(existingExpense.type === 'INCOME' ? 'Income' : 'Expense');
+      setSelectedWallet({
+        id: existingExpense.walletId,
+        name: existingExpense.walletName,
+      });
+      setSelectedCategory({
+        id: existingExpense.categoryId,
+        name: existingExpense.categoryName,
+      });
+      setSelectedDate(new Date(existingExpense.date));
+      setNote(existingExpense.description);
+      setInputValue(existingExpense.amount.toString());
+    }
+  }, [isEdit, existingExpense]);
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
@@ -51,7 +114,7 @@ const AddExpense = () => {
     }
 
     if (['+', '-', 'x', '÷'].includes(value)) {
-      setInputValue((prev) => prev + ' ' + value + ' ');
+      setInputValue((prev: any) => prev + ' ' + value + ' ');
     } else if (value === '=') {
       try {
         const sanitizedInput = inputValue.replace(/x/g, '*').replace(/÷/g, '/');
@@ -61,18 +124,18 @@ const AddExpense = () => {
         console.error('Invalid expression:', error);
       }
     } else {
-      setInputValue((prev) => prev + value);
+      setInputValue((prev: any) => prev + value);
     }
   };
 
   const handleUndo = () => {
     Vibration.vibrate(60);
-    setInputValue((prev) => prev.slice(0, -1));
+    setInputValue((prev: any) => prev.slice(0, -1));
   };
 
   const handleLongPress = () => {
     Vibration.vibrate(65);
-    setInputValue((prev) => prev.slice(0, 0));
+    setInputValue('');
   };
 
   const handleSave = async () => {
@@ -107,29 +170,39 @@ const AddExpense = () => {
         date: selectedDate.toISOString(),
       };
 
-      const response = await axios.post(
-        'https://expense-tracker-ldy5.onrender.com/v1/expenses/',
-        expenseData,
-        {
-          headers: {
-            Authorization: `Bearer ${clerkToken}`,
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
+      const apiUrl = 'https://expense-tracker-ldy5.onrender.com/v1/expenses/';
+      const config = {
+        headers: {
+          Authorization: `Bearer ${clerkToken}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
         },
-      );
+      };
 
-      Alert.alert('Success', 'Expense added successfully!');
-      setInputValue('');
-      setNote('');
-      setSelectedWallet(null);
-      setSelectedCategory(null);
-      setSelectedDate(new Date());
+      if (isEdit && existingExpense) {
+        await axios.put(`${apiUrl}${existingExpense.id}`, expenseData, config);
+        Alert.alert('Success', 'Expense updated successfully!');
+      } else {
+        await axios.post(apiUrl, expenseData, config);
+        Alert.alert('Success', 'Expense added successfully!');
+      }
+
+      // Reset form and navigate back
+      resetForm();
       router.replace('/');
     } catch (error) {
       console.error('Error saving expense:', error);
-      Alert.alert('Error', 'Failed to add expense. Please try again.');
+      Alert.alert('Error', `Failed to ${isEdit ? 'update' : 'add'} expense. Please try again.`);
     }
+  };
+
+  const resetForm = () => {
+    setInputValue('');
+    setNote('');
+    setSelectedWallet(null);
+    setSelectedCategory(null);
+    setSelectedDate(new Date());
+    setSelectedOption('Expense');
   };
 
   useFocusEffect(
@@ -140,7 +213,6 @@ const AddExpense = () => {
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
-
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     }, []),
   );
@@ -190,15 +262,6 @@ const AddExpense = () => {
             )}
           </TouchableOpacity>
 
-          <WalletModal
-            isVisible={isWalletModalVisible}
-            onClose={() => setWalletModalVisible(false)}
-            onSelectWallet={(wallet) => {
-              setSelectedWallet(wallet);
-              setWalletModalVisible(false);
-            }}
-          />
-
           <TouchableOpacity
             className="flex-1 h-16 w-16 justify-center items-center border border-gray-400 bg-gray-100 rounded-xl"
             onPress={() => setCategoryModalVisible(true)}
@@ -209,17 +272,34 @@ const AddExpense = () => {
               <Ionicons name="pricetag" size={24} color="black" />
             )}
           </TouchableOpacity>
-
-          <CategoryModal
-            isVisible={isCategoryModalVisible}
-            onClose={() => setCategoryModalVisible(false)}
-            onSelectCategory={(category) => {
-              setSelectedCategory(category);
-              setCategoryModalVisible(false);
-            }}
-            selectedOption={selectedOption}
-          />
         </View>
+
+        {/* Modals */}
+        <WalletModal
+          isVisible={isWalletModalVisible}
+          onClose={() => setWalletModalVisible(false)}
+          onSelectWallet={(wallet) => {
+            setSelectedWallet(wallet);
+            setWalletModalVisible(false);
+          }}
+        />
+
+        <CategoryModal
+          isVisible={isCategoryModalVisible}
+          onClose={() => setCategoryModalVisible(false)}
+          onSelectCategory={(category) => {
+            setSelectedCategory(category);
+            setCategoryModalVisible(false);
+          }}
+          selectedOption={selectedOption}
+        />
+
+        <DatePickerModal
+          isVisible={isDatePickerVisible}
+          onClose={() => setDatePickerVisible(false)}
+          onDateSelect={(date) => setSelectedDate(date)}
+          initialDate={selectedDate}
+        />
 
         {/* Note Input */}
         <TextInput
@@ -264,7 +344,7 @@ const AddExpense = () => {
             className="flex-1 mx-1 p-4 bg-green-500 rounded-lg justify-center items-center"
             onPress={handleSave}
           >
-            <Text className="text-white text-lg font-semibold">Save</Text>
+            <Text className="text-white text-lg font-semibold">{isEdit ? 'Update' : 'Save'}</Text>
           </TouchableOpacity>
           <Link
             href="/"
@@ -274,7 +354,7 @@ const AddExpense = () => {
           </Link>
         </View>
 
-        {/* Date and Month */}
+        {/* Date at bottom */}
         <View className="items-center">
           <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
             <Text className="text-lg font-semibold text-gray-600">
@@ -282,14 +362,6 @@ const AddExpense = () => {
             </Text>
           </TouchableOpacity>
         </View>
-
-        {/* Date Picker Modal */}
-        <DatePickerModal
-          isVisible={isDatePickerVisible}
-          onClose={() => setDatePickerVisible(false)}
-          onDateSelect={(date) => setSelectedDate(date)}
-          initialDate={selectedDate}
-        />
       </View>
     </KeyboardAvoidingView>
   );
