@@ -6,6 +6,7 @@ import cors from 'cors';
 import walletRoute from './routes/wallet.route.js';
 import categoryRoute from './routes/category.route.js';
 import ExpenseRoute from './routes/expenses.route.js';
+import AnalysisRoute from './routes/analysis.route.js';
 
 dotenv.config({
   path: './.env',
@@ -48,6 +49,7 @@ app.use(cookieParser());
 app.use('/v1/expenses', ExpenseRoute);
 app.use('/v1/wallet', walletRoute);
 app.use('/v1/category', categoryRoute);
+app.use('/v1/analysis', AnalysisRoute)
 
 app.listen(PORT, async () => {
   try {
