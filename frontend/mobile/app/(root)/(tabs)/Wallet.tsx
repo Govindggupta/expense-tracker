@@ -8,7 +8,7 @@ import {
   Alert,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddButton from '@/components/AddButton';
 import { SignedIn, useAuth, useUser } from '@clerk/clerk-expo';
@@ -17,6 +17,8 @@ import { Entypo, Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import ReactNativeModal from 'react-native-modal';
 import { Portal } from 'react-native-paper';
+import { RefreshControl } from 'react-native-gesture-handler';
+import { ReloadContext } from '@/context/ReloadContext';
 
 type Wallet = {
   id: string;
@@ -34,6 +36,8 @@ const Wallet = () => {
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+
+  const { reload, triggerReload } = useContext(ReloadContext);
 
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -234,7 +238,7 @@ const Wallet = () => {
     };
 
     fetchWallets();
-  }, [user]);
+  }, [user, reload]);
 
   const handleAddPress = () => {
     router.replace('/(root)/AddExpense');
@@ -251,6 +255,7 @@ const Wallet = () => {
               <Text className="text-red-500">{error}</Text>
             ) : (
               <FlatList
+                refreshControl={<RefreshControl refreshing={reload} onRefresh={triggerReload} />}
                 data={wallets}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (

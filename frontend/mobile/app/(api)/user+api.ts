@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       const expenseCategories = [
         { name: 'Food', type: 'EXPENSE' },
         { name: 'Transport', type: 'EXPENSE' },
-        { name: 'Utilities', type: 'EXPENSE' },
+        { name: 'Bills', type: 'EXPENSE' },
         { name: 'Entertainment', type: 'EXPENSE' },
         { name: 'Healthcare', type: 'EXPENSE' },
       ];
@@ -62,7 +62,6 @@ export async function POST(request: Request) {
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
   }
 }
-
 
 // // THIS IS FOR CONNECTING THE LOCAL POSTGRES DB
 

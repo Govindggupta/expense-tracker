@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddButton from '@/components/AddButton';
 import { router } from 'expo-router';
@@ -18,6 +18,8 @@ import { Entypo, Ionicons } from '@expo/vector-icons';
 import { TextInput } from 'react-native-paper';
 import ReactNativeModal from 'react-native-modal';
 import { Portal } from 'react-native-paper';
+import { ReloadContext } from '@/context/ReloadContext';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 interface Category {
   id: string;
@@ -35,6 +37,8 @@ const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+
+  const { reload, triggerReload } = useContext(ReloadContext);
 
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -161,11 +165,14 @@ const Categories = () => {
         return;
       }
 
-      const response = await axios.delete(`https://expense-tracker-ldy5.onrender.com/v1/category/${categoryId}`, {
-        headers: {
-          Authorization: `Bearer ${clerkToken}`,
+      const response = await axios.delete(
+        `https://expense-tracker-ldy5.onrender.com/v1/category/${categoryId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${clerkToken}`,
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         Alert.alert('Success', 'Category deleted successfully!');
@@ -218,7 +225,7 @@ const Categories = () => {
     };
 
     fetchCategories();
-  }, [user]);
+  }, [user, reload]);
 
   const handleAddPress = () => {
     router.replace('/(root)/AddExpense');
@@ -294,6 +301,9 @@ const Categories = () => {
                   <>
                     <Text className="text-xl font-bold text-gray-900 mb-3">Income</Text>
                     <FlatList
+                      refreshControl={
+                        <RefreshControl refreshing={reload} onRefresh={triggerReload} />
+                      }
                       data={incomeCategories}
                       keyExtractor={(item) => item.id}
                       renderItem={renderCategoryItem}

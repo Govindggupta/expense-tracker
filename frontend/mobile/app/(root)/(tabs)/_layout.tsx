@@ -12,21 +12,20 @@ const TabsComponent = () => (
     screenOptions={{
       tabBarStyle: {
         position: 'absolute',
-        bottom: 10,
         left: 20,
         right: 20,
         elevation: 0,
         backgroundColor: 'black',
-        borderRadius: 40,
-        height: 56,
+        borderTopEndRadius: 15,
+        borderTopStartRadius: 15,
+        height: 65,
         shadowColor: '#000',
         shadowOpacity: 0.06,
         shadowOffset: {
           width: 10,
           height: 10,
         },
-        paddingHorizontal: 18,
-        marginHorizontal: 8,
+        paddingHorizontal: 2,
       },
       tabBarItemStyle: {
         justifyContent: 'center',
@@ -61,10 +60,12 @@ const TabsComponent = () => (
       }}
     />
     <Tabs.Screen
-      name="Split"
+      name="Recurring"
       options={{
-        tabBarIcon: ({ color, size }) => <Entypo name="slideshare" size={size} color={color} />,
-        tabBarLabel: 'Split',
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="calendar-clock" size={size} color={color} />
+        ),
+        tabBarLabel: 'Auto',
         headerShown: false,
       }}
     />
@@ -80,7 +81,15 @@ const TabsComponent = () => (
       name="Categories"
       options={{
         tabBarIcon: ({ color, size }) => <Ionicons name="pricetag" size={size} color={color} />,
-        tabBarLabel: 'Categories',
+        tabBarLabel: 'Category',
+        headerShown: false,
+      }}
+    />
+    <Tabs.Screen
+      name="Split"
+      options={{
+        tabBarIcon: ({ color, size }) => <Entypo name="slideshare" size={size} color={color} />,
+        tabBarLabel: 'Split',
         headerShown: false,
       }}
     />
