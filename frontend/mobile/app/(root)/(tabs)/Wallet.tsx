@@ -358,7 +358,7 @@ const Wallet = () => {
               style={{ justifyContent: 'center', alignItems: 'center' }}
             >
               <View className="bg-white p-6 rounded-2xl w-4/5">
-                <Text className="text-xl font-semibold text-center mb-4">
+                <Text className="text-xl font-semibold text-center mb-4 text-[#2A7C76]">
                   {selectedWallet ? 'Edit Wallet' : 'Add a New Wallet'}
                 </Text>
 

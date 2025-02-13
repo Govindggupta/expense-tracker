@@ -414,7 +414,7 @@ const Categories = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text className="text-lg font-semibold text-center mb-4 text-green-800">
+              <Text className="text-lg font-semibold text-center mb-4 text-[#2A7C76]">
                 {selectedCategory ? 'Edit Category' : 'Add a New Category'}
               </Text>
 
