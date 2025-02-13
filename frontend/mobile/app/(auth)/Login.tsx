@@ -1,4 +1,4 @@
-import { View, Text, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import CustomButton from '@/components/CustomButton';
 import { Link, router } from 'expo-router';
@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import OAuth from '@/components/OAuth';
 import { useSignIn } from '@clerk/clerk-expo';
 
-const Signup = () => {
+const Login = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
 
   const [form, setForm] = useState({
@@ -38,42 +38,44 @@ const Signup = () => {
   }, [isLoaded, form]);
 
   return (
-    <SafeAreaView className="flex-1 justify-center bg-white px-6 py-4">
-      <View className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
-        <Text className="text-3xl font-bold text-center mb-6 text-gray-800">
-          Login to Your Account
-        </Text>
-        <View className="space-y-4">
-          <InputField
-            label="Email"
-            placeholder="Enter email"
-            textContentType="emailAddress"
-            value={form.email}
-            onChangeText={(value: string) => setForm({ ...form, email: value })}
-          />
-          <InputField
-            label="Password"
-            placeholder="Enter password"
-            secureTextEntry={true}
-            textContentType="password"
-            value={form.password}
-            onChangeText={(value: string) => setForm({ ...form, password: value })}
-          />
-          <CustomButton
-            title="Login"
-            onPress={onSignInPress}
-            className="bg-blue-600 text-white shadow-md"
-          />
+    <SafeAreaView className="flex-1 relative justify-center items-center">
+      <View className="absolute top-0 w-full h-80 bg-[#2A7C76] rounded-b-[15%]" />
+      <View className="flex-1 w-full px-10 py-4 justify-center items-center">
+        <Text className="text-4xl font-bold text-white mb-8">Login to your Account</Text>
 
-          <OAuth />
+        <View className="w-full max-w-md bg-white shadow-2xl shadow-gray-500 rounded-2xl p-8">
+          <View className="space-y-6">
+            <InputField
+              label="Email"
+              placeholder="Enter email"
+              textContentType="emailAddress"
+              value={form.email}
+              onChangeText={(value: string) => setForm({ ...form, email: value })}
+            />
+            <InputField
+              label="Password"
+              placeholder="Enter password"
+              secureTextEntry={true}
+              textContentType="password"
+              value={form.password}
+              onChangeText={(value: string) => setForm({ ...form, password: value })}
+            />
+            <CustomButton
+              title="Login"
+              onPress={onSignInPress}
+              className="bg-[#2A7C76] text-white shadow-md"
+            />
 
-          <Link href="/Signup" className="text-center text-gray-500 mt-4">
-            Don't have an Account? <Text className="text-blue-600 font-semibold">Sign Up</Text>
-          </Link>
+            <OAuth />
+
+            <Link href="/Signup" className="text-center text-gray-500 mt-4">
+              Don't have an Account? <Text className="text-[#2A7C76] font-semibold">Sign Up</Text>
+            </Link>
+          </View>
         </View>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Signup;
+export default Login;

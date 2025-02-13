@@ -22,7 +22,7 @@ const InputField: React.FC<{
       <View className="my-4 w-full">
         <Text className={`text-lg mb-2 font-semibold ${labelStyle}`}>{label}</Text>
         <View
-          className={`flex flex-row items-center bg-neutral-100 rounded-lg border border-neutral-300 focus:border-primary-500 px-4 py-1 min-h-[50px] ${containerStyle}`}
+          className={`flex flex-row items-center bg-neutral-100 rounded-lg border-[1.5px] border-[#2A7C76] focus:border-primary-500 px-4 py-1 min-h-[50px] ${containerStyle}`}
         >
           <TextInput
             className={`text-[15px] flex-1 text-gray-900 ${inputStyle}`}
