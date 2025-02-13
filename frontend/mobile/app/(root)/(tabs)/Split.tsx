@@ -17,7 +17,7 @@ const Split = () => {
           <Text className="text-xl text-center">Split</Text>
         </View>
         <View className="absolute bottom-20 right-5">
-          <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
+          <AddButton color="#2A7C76" size={65} onPress={handleAddPress} />
         </View>
       </SignedIn>
     </SafeAreaView>

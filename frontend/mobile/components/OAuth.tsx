@@ -1,6 +1,5 @@
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
 import { googleOAuth } from '@/lib/cache';
 import { useOAuth } from '@clerk/clerk-expo';
 import { router } from 'expo-router';
@@ -29,11 +28,11 @@ const OAuth = () => {
 
       <View>
         <TouchableOpacity
-          className="flex flex-row justify-center items-center p-3 bg-neutral-100 rounded-lg"
+          className="flex flex-row justify-center items-center p-3 bg-neutral-100 rounded-lg border border-gray-400"
           onPress={handleGoogleSignIn}
         >
-          <Ionicons name="logo-google" size={24} color="blue" style={{ marginRight: 8 }} />
-          <Text className="text-lg text-blue-600 font-semibold">Continue with Google</Text>
+          <Image source={require('@/assets/images/google-icon.png')} className="w-6 h-6 mr-2" />
+          <Text className="text-lg font-semibold">Continue with Google</Text>
         </TouchableOpacity>
       </View>
     </View>

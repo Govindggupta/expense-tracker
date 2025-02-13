@@ -12,7 +12,7 @@ interface SearchButtonProps {
 const SearchButton = ({ onClick, label, className = '' }: SearchButtonProps) => {
     return (
         <TouchableOpacity onPress={onClick} className={`flex-row items-center ${className}`}>
-            <FontAwesome name="search" size={20} color="black" />
+            <FontAwesome name="search" size={20} color="white" />
             <Text>{label}</Text>
         </TouchableOpacity>
     );

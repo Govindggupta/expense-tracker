@@ -1,4 +1,4 @@
-import { View, Text, Alert } from 'react-native';
+import { View, Text, Alert, Image } from 'react-native';
 import React, { useState } from 'react';
 import CustomButton from '@/components/CustomButton';
 import { Link, router } from 'expo-router';
@@ -87,46 +87,48 @@ const Signup = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white justify-center items-center px-6">
-      <View className="w-full max-w-md bg-white shadow-lg rounded-2xl p-6">
-        <Text className="text-3xl font-bold text-center text-gray-900 mb-6">
-          Create Your Account
-        </Text>
+    <SafeAreaView className="flex-1 relative justify-center items-center">
+      <View className="absolute top-0 w-full h-80 bg-[#2A7C76] rounded-b-[15%]" />
 
-        <View className="space-y-4">
-          <InputField
-            label="Name"
-            placeholder="Enter name"
-            value={form.name}
-            onChangeText={(value: string) => setForm({ ...form, name: value })}
-          />
-          <InputField
-            label="Email"
-            placeholder="Enter email"
-            textContentType="emailAddress"
-            value={form.email}
-            onChangeText={(value: string) => setForm({ ...form, email: value })}
-          />
-          <InputField
-            label="Password"
-            placeholder="Enter password"
-            secureTextEntry={true}
-            textContentType="password"
-            value={form.password}
-            onChangeText={(value: string) => setForm({ ...form, password: value })}
-          />
+      <View className="flex-1 w-full px-10 py-4 justify-center items-center">
+        <Text className="text-4xl font-bold text-white mb-8">Create your Account</Text>
 
-          <CustomButton
-            title="Sign Up"
-            onPress={onSignUpPress}
-            className="bg-blue-600 text-white shadow-md"
-          />
+        <View className="w-full max-w-md bg-white shadow-2xl shadow-gray-500 rounded-2xl p-8">
+          <View className="space-y-6">
+            <InputField
+              label="Name"
+              placeholder="Enter name"
+              value={form.name}
+              onChangeText={(value: string) => setForm({ ...form, name: value })}
+            />
+            <InputField
+              label="Email"
+              placeholder="Enter email"
+              textContentType="emailAddress"
+              value={form.email}
+              onChangeText={(value: string) => setForm({ ...form, email: value })}
+            />
+            <InputField
+              label="Password"
+              placeholder="Enter password"
+              secureTextEntry={true}
+              textContentType="password"
+              value={form.password}
+              onChangeText={(value: string) => setForm({ ...form, password: value })}
+            />
 
-          <OAuth />
+            <CustomButton
+              title="Sign Up"
+              onPress={onSignUpPress}
+              className="bg-[#2A7C76] text-white shadow-md"
+            />
 
-          <Link href="/Login" className="text-center text-gray-500 mt-4">
-            Already have an account? <Text className="text-blue-600 font-semibold">Log In</Text>
-          </Link>
+            <OAuth />
+
+            <Link href="/Login" className="text-center text-gray-500 mt-4">
+              Already have an account? <Text className="text-[#2A7C76] font-semibold">Log In</Text>
+            </Link>
+          </View>
         </View>
       </View>
 
@@ -178,7 +180,7 @@ const Signup = () => {
               router.push(`/(root)/(tabs)/Expenses`);
               setShowSuccessModal(false);
             }}
-            className="bg-blue-600 text-white text-lg p-2"
+            className="bg-[#2A7C76] text-white text-lg p-2"
           />
         </View>
       </ReactNativeModal>

@@ -12,19 +12,21 @@ const TabsComponent = () => (
     screenOptions={{
       tabBarStyle: {
         position: 'absolute',
+        boxShadow: '',
         left: 20,
         right: 20,
-        elevation: 0,
-        backgroundColor: 'black',
-        borderTopEndRadius: 15,
-        borderTopStartRadius: 15,
+        elevation: 5,
+        backgroundColor: 'white',
         height: 65,
         shadowColor: '#000',
-        shadowOpacity: 0.06,
+        shadowOpacity: 0.5,
+        shadowRadius: 10,
         shadowOffset: {
-          width: 10,
-          height: 10,
+          width: 0,
+          height: -5,
         },
+        borderTopColor: 'rgba(0, 0, 0, 0.8)',
+        borderTopWidth: 1,
         paddingHorizontal: 2,
       },
       tabBarItemStyle: {
@@ -32,8 +34,8 @@ const TabsComponent = () => (
         alignItems: 'center',
       },
       tabBarShowLabel: true,
-      tabBarActiveTintColor: 'white',
-      tabBarInactiveTintColor: 'gray',
+      tabBarActiveTintColor: '#2A7C76',
+      tabBarInactiveTintColor: '#c9c9c9',
       tabBarLabelStyle: {
         fontSize: 11,
       },
@@ -107,6 +109,16 @@ const Layout = () => {
         name="Expense Tracker"
         component={TabsComponent}
         options={{
+          headerStyle: {
+            backgroundColor: '#2A7C76',
+            elevation: 0,
+            shadowOpacity: 0,
+          },
+          headerTintColor: 'white',
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontWeight: '500',
+          },
           headerRight: () => <SearchButton className="mr-5" onClick={handleSearchButtonClick} />,
         }}
       />

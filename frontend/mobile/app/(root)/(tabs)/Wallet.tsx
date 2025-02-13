@@ -246,150 +246,160 @@ const Wallet = () => {
 
   return (
     <TouchableWithoutFeedback onPress={() => setMenuVisible(null)}>
-      <SafeAreaView className="h-full p-5 w-full">
+      <SafeAreaView className="h-full w-full bg-white">
+        <View className="absolute top-0 w-full h-56 bg-[#2A7C76] rounded-b-[15%]" />
         <SignedIn>
-          <View className="w-full flex gap-3 overflow-visible">
-            {loading ? (
-              <ActivityIndicator size="large" color="#2162DB" />
-            ) : error ? (
-              <Text className="text-red-500">{error}</Text>
-            ) : (
-              <FlatList
-                refreshControl={<RefreshControl refreshing={reload} onRefresh={triggerReload} />}
-                data={wallets}
-                keyExtractor={(item) => item.id.toString()}
-                renderItem={({ item }) => (
-                  <View className="bg-blue-100 p-4 rounded-lg shadow-md mb-3 border border-blue-400 flex-row items-center justify-between">
-                    <View className="w-16 h-16 rounded-xl bg-gray-100 flex items-center justify-center">
-                      <Text className="text-md font-bold">{item.name[0]}</Text>
-                    </View>
-                    <View className="flex-1 ml-4">
-                      <Text className="text-xl font-semibold text-gray-900">{item.name}</Text>
-                      <Text className={'text-lg text-gray-600'}>
-                        Balance:{' '}
-                        <Text
-                          className={`${
-                            item.balance < 0 ? 'text-red-500' : 'text-green-500'
-                          } font-bold`}
-                        >
-                          ₹{item.balance}
-                        </Text>
-                      </Text>
-                    </View>
-
-                    <TouchableOpacity
-                      onPress={(event) => toggleMenu(item.id, event)}
-                      className="p-1 relative"
-                    >
-                      <Entypo size={20} name="dots-three-horizontal" color={'#0E3789'} />
-                    </TouchableOpacity>
-
-                    {menuVisible === item.id && (
-                      <Portal>
-                        <View
-                          style={{
-                            position: 'absolute',
-                            top: menuPosition.y + 30,
-                            left: menuPosition.x - 100,
-                            backgroundColor: 'white',
-                            shadowColor: '#000',
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.8,
-                            shadowRadius: 2,
-                            elevation: 5,
-                            padding: 10,
-                            borderRadius: 5,
-                            zIndex: 1000,
-                          }}
-                        >
-                          <TouchableOpacity
-                            onPress={() => handleEditWallet(item)}
-                            className="py-2 px-4"
-                          >
-                            <Text className="text-gray-900">Edit Wallet</Text>
-                          </TouchableOpacity>
-
-                          <TouchableOpacity
-                            onPress={() => confirmDeleteWallet(item.id)}
-                            className="py-2 px-4"
-                          >
-                            <Text className="text-red-500">Delete Wallet</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </Portal>
-                    )}
-                  </View>
-                )}
-              />
-            )}
-          </View>
-
-          <View className="flex items-center">
-            <TouchableOpacity
-              onPress={() => {
-                setModalVisible(true);
-                setSelectedWallet(null);
-                setWalletTitle('');
-                setInitialAmount('');
-              }}
-              className="flex flex-row items-center gap-2 justify-center w-1/2 py-2 px-4 rounded-lg border-2 border-blue-400 bg-white shadow-md"
-            >
-              <Ionicons name="add-circle-outline" size={22} color={'#0E3789'} />
-              <Text className="text-blue-900 font-semibold text-base">Add New Wallet</Text>
-            </TouchableOpacity>
-          </View>
-
-          <ReactNativeModal
-            isVisible={isModalVisible}
-            onBackdropPress={() => setModalVisible(false)}
-            swipeDirection="down"
-            animationIn="slideInUp"
-            animationOut="slideOutDown"
-            backdropOpacity={0.5}
-            style={{ justifyContent: 'center', alignItems: 'center' }}
-          >
-            <View className="bg-white p-6 rounded-2xl w-4/5">
-              <Text className="text-lg font-semibold text-center mb-4">
-                {selectedWallet ? 'Edit Wallet' : 'Add a New Wallet'}
+          <View className="w-full h-full p-5">
+            <View className="w-full flex gap-3 overflow-visible">
+              <Text className="text-white text-center font-bold text-2xl">
+                Your Personal Wallets
               </Text>
+              {loading ? (
+                <ActivityIndicator size="large" color="#2162DB" />
+              ) : error ? (
+                <Text className="text-red-500">{error}</Text>
+              ) : (
+                <FlatList
+                  refreshControl={<RefreshControl refreshing={reload} onRefresh={triggerReload} />}
+                  data={wallets}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <View className="bg-[#EFFCFB] p-4 rounded-3xl shadow-md mb-5 border border-green-700 flex-row items-center justify-between">
+                      <View className="w-16 h-16 rounded-full bg-white border border-green-700 flex items-center justify-center">
+                        <Text className="text-md font-bold">{item.name[0]}</Text>
+                      </View>
+                      <View className="flex-1 ml-4">
+                        <Text className="text-xl font-semibold text-green-900">{item.name}</Text>
+                        <Text className={'text-lg text-green-800'}>
+                          Balance:{' '}
+                          <Text
+                            className={`${
+                              item.balance < 0 ? 'text-red-500' : 'text-green-600'
+                            } font-bold text-xl`}
+                          >
+                            ₹{item.balance}
+                          </Text>
+                        </Text>
+                      </View>
 
-              <TextInput
-                placeholder="Wallet Title"
-                placeholderTextColor="#888"
-                value={walletTitle}
-                onChangeText={setWalletTitle}
-                className="w-full p-3 mb-4 border rounded-lg border-gray-300"
-              />
+                      <TouchableOpacity
+                        onPress={(event) => toggleMenu(item.id, event)}
+                        className="p-1 relative"
+                      >
+                        <Entypo size={20} name="dots-three-horizontal" color={'black'} />
+                      </TouchableOpacity>
 
-              <TextInput
-                placeholder="Initial Amount"
-                placeholderTextColor="#888"
-                value={initialAmount}
-                onChangeText={setInitialAmount}
-                keyboardType="numeric"
-                className="w-full p-3 mb-4 border rounded-lg border-gray-300"
-              />
+                      {menuVisible === item.id && (
+                        <Portal>
+                          <View
+                            style={{
+                              position: 'absolute',
+                              top: menuPosition.y + 30,
+                              left: menuPosition.x - 120,
+                              backgroundColor: 'white',
+                              shadowColor: '#000',
+                              shadowOffset: { width: 0, height: 2 },
+                              shadowOpacity: 0.8,
+                              shadowRadius: 2,
+                              elevation: 5,
+                              padding: 10,
+                              borderRadius: 5,
+                              zIndex: 1000,
+                            }}
+                          >
+                            <TouchableOpacity
+                              onPress={() => handleEditWallet(item)}
+                              className="py-2 px-4"
+                            >
+                              <Text className="text-gray-900 text-center font-medium text-lg">
+                                Edit Wallet
+                              </Text>
+                            </TouchableOpacity>
 
+                            <TouchableOpacity
+                              onPress={() => confirmDeleteWallet(item.id)}
+                              className="py-2 px-4"
+                            >
+                              <Text className="text-red-500 text-center font-medium text-lg">
+                                Delete Wallet
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        </Portal>
+                      )}
+                    </View>
+                  )}
+                />
+              )}
+            </View>
+
+            <View className="flex items-center">
               <TouchableOpacity
-                onPress={selectedWallet ? handleUpdateWallet : handleCreateWallet}
-                className="w-full py-3 rounded-lg bg-blue-500 mb-2"
+                onPress={() => {
+                  setModalVisible(true);
+                  setSelectedWallet(null);
+                  setWalletTitle('');
+                  setInitialAmount('');
+                }}
+                className="flex flex-row items-center gap-2 justify-center w-1/2 py-4 px-4 rounded-lg shadow-md bg-[#2A7C76]"
               >
-                <Text className="text-white text-center font-semibold">
-                  {selectedWallet ? 'Update Wallet' : 'Create Wallet'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => setModalVisible(false)}
-                className="w-full py-3 rounded-lg bg-gray-300"
-              >
-                <Text className="text-center font-semibold text-gray-700">Cancel</Text>
+                <Ionicons name="add-circle-outline" size={26} color={'white'} />
+                <Text className="text-white font-semibold text-lg">Add New Wallet</Text>
               </TouchableOpacity>
             </View>
-          </ReactNativeModal>
 
-          <View className="absolute bottom-20 right-5">
-            <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
+            <ReactNativeModal
+              isVisible={isModalVisible}
+              onBackdropPress={() => setModalVisible(false)}
+              swipeDirection="down"
+              animationIn="slideInUp"
+              animationOut="slideOutDown"
+              backdropOpacity={0.5}
+              style={{ justifyContent: 'center', alignItems: 'center' }}
+            >
+              <View className="bg-white p-6 rounded-2xl w-4/5">
+                <Text className="text-xl font-semibold text-center mb-4 text-[#2A7C76]">
+                  {selectedWallet ? 'Edit Wallet' : 'Add a New Wallet'}
+                </Text>
+
+                <TextInput
+                  placeholder="Wallet Title"
+                  placeholderTextColor="#888"
+                  value={walletTitle}
+                  onChangeText={setWalletTitle}
+                  className="w-full bg-gray-100 p-3 mb-4 border-[1.5px] rounded-lg border-green-700"
+                />
+
+                <TextInput
+                  placeholder="Initial Amount"
+                  placeholderTextColor="#888"
+                  value={initialAmount}
+                  onChangeText={setInitialAmount}
+                  keyboardType="numeric"
+                  className="w-full bg-gray-100 p-3 mb-4 border-[1.5px] rounded-lg border-green-700"
+                />
+
+                <TouchableOpacity
+                  onPress={selectedWallet ? handleUpdateWallet : handleCreateWallet}
+                  className="w-full py-3 rounded-lg bg-[#2A7C76] mb-2"
+                >
+                  <Text className="text-white text-center font-semibold text-lg">
+                    {selectedWallet ? 'Update Wallet' : 'Create Wallet'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setModalVisible(false)}
+                  className="w-full py-3 rounded-lg bg-red-500"
+                >
+                  <Text className="text-center font-semibold text-white text-lg">Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </ReactNativeModal>
+
+            <View className="absolute bottom-20 right-5">
+              <AddButton color="#2A7C76" size={65} onPress={handleAddPress} />
+            </View>
           </View>
         </SignedIn>
       </SafeAreaView>

@@ -161,10 +161,14 @@ const Expenses = () => {
   const groupedExpenses = groupExpensesByMonth(expenses);
 
   return (
-    <SafeAreaView className="flex-1 p-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="absolute top-0 w-full h-56 bg-[#2A7C76] rounded-b-[15%]" />
       <SignedIn>
-        <View className="w-full max-w-md flex-1">
-          <Text className="text-xl font-semibold text-center mb-2">All Expenses</Text>
+        <View className="w-full p-2 flex-1">
+          <View className="bg-gray-300 rounded-3xl h-56 w-11/12 mt-16 m-auto">
+            {/* component here */}
+          </View>
+          <Text className="text-2xl font-semibold text-center mt-4">Transactions History</Text>
 
           {loading ? (
             <ActivityIndicator size="large" color="#2162DB" />
@@ -182,9 +186,9 @@ const Expenses = () => {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => handleExpensePress(item)}
-                  className="bg-blue-100 rounded-xl shadow-md p-3 mb-3 mx-2 flex-row items-center justify-between"
+                  className="p-3 mb-3 mx-2 flex-row items-center border-b border-b-gray-200 justify-between"
                 >
-                  <View className="w-12 h-12 bg-white rounded-md flex items-center justify-center">
+                  <View className="w-12 h-12 bg-gray-300 rounded-md flex items-center justify-center">
                     <Text className="text-lg font-bold">
                       {item.categoryName.charAt(0).toUpperCase()}
                     </Text>
@@ -198,7 +202,7 @@ const Expenses = () => {
                   <Text
                     className={`${
                       item.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
-                    } text-lg font-bold`}
+                    } text-xl font-bold`}
                   >
                     {item.type === 'INCOME' ? '+' : '-'} ₹{item.amount}
                   </Text>
@@ -206,8 +210,8 @@ const Expenses = () => {
               )}
               renderSectionHeader={({ section: { title } }) => (
                 <View className="p-2">
-                  <Text className="text-xl font-bold mt-1">{title}</Text>
-                  <Text className="bg-gray-500 h-0.5 mt-1"></Text>
+                  <Text className="text-xl font-bold mt-1 text-gray-900">{title}</Text>
+                  <Text className="bg-gray-400 h-0.5 mt-1"></Text>
                 </View>
               )}
             />
@@ -222,57 +226,64 @@ const Expenses = () => {
           animationOut="slideOutDown"
           style={{ justifyContent: 'center', alignItems: 'center' }}
         >
-          <View className="bg-white p-6 rounded-2xl w-4/5">
+          <View className="bg-white p-6 rounded-2xl w-11/12">
             {selectedExpense && (
-              <>
-                <Text className="text-xl font-bold text-center mb-4">Expense Details</Text>
+              <View>
+                <Text className="text-xl font-bold text-center mb-4 text-[#2A7C76]">
+                  Expense Details
+                </Text>
 
-                <View className="mb-3">
-                  <Text className="text-lg font-semibold text-gray-800">Type</Text>
-                  <Text
-                    className={`${
-                      selectedExpense.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
-                    } text-md font-bold`}
-                  >
-                    {selectedExpense.type === 'INCOME' ? 'Income' : 'Expense'}
-                  </Text>
-                </View>
-
-                <View className="mb-3">
-                  <Text className="text-lg font-semibold text-gray-800">Wallet</Text>
-                  <Text className="text-md text-gray-600">{selectedExpense.walletName}</Text>
-                </View>
-
-                <View className="mb-3">
-                  <Text className="text-lg font-semibold text-gray-800">Category</Text>
-                  <Text className="text-md text-gray-600">{selectedExpense.categoryName}</Text>
-                </View>
-
-                <View className="mb-3">
-                  <Text className="text-lg font-semibold text-gray-800">Amount</Text>
-                  <Text
-                    className={`${
-                      selectedExpense.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
-                    } text-md font-bold`}
-                  >
-                    {selectedExpense.type === 'INCOME' ? '+' : '-'} ₹{selectedExpense.amount}
-                  </Text>
-                </View>
-
-                <View className="mb-3">
-                  <Text className="text-lg font-semibold text-gray-800">Date</Text>
-                  <Text className="text-md text-gray-600">{formatDate(selectedExpense.date)}</Text>
-                </View>
-
-                {selectedExpense.description && (
-                  <View className="mb-3">
-                    <Text className="text-lg font-semibold text-gray-800">Description</Text>
-                    <Text className="text-md text-gray-600">{selectedExpense.description}</Text>
+                <View className="flex-row justify-between mb-4">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-lg font-semibold text-gray-800">Type</Text>
+                    <Text
+                      className={`${
+                        selectedExpense.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
+                      } text-md font-bold`}
+                    >
+                      {selectedExpense.type === 'INCOME' ? 'Income' : 'Expense'}
+                    </Text>
                   </View>
-                )}
+                  <View className="flex-1 ml-2">
+                    <Text className="text-lg font-semibold text-gray-800">Wallet</Text>
+                    <Text className="text-md text-gray-600">{selectedExpense.walletName}</Text>
+                  </View>
+                </View>
+
+                <View className="flex-row justify-between mb-4">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-lg font-semibold text-gray-800">Category</Text>
+                    <Text className="text-md text-gray-600">{selectedExpense.categoryName}</Text>
+                  </View>
+                  <View className="flex-1 ml-2">
+                    <Text className="text-lg font-semibold text-gray-800">Amount</Text>
+                    <Text
+                      className={`${
+                        selectedExpense.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
+                      } text-md font-bold`}
+                    >
+                      {selectedExpense.type === 'INCOME' ? '+' : '-'} ₹{selectedExpense.amount}
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="flex-row justify-between mb-4">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-lg font-semibold text-gray-800">Date</Text>
+                    <Text className="text-md text-gray-600">
+                      {formatDate(selectedExpense.date)}
+                    </Text>
+                  </View>
+                  {selectedExpense.description && (
+                    <View className="flex-1 ml-2">
+                      <Text className="text-lg font-semibold text-gray-800">Description</Text>
+                      <Text className="text-md text-gray-600">{selectedExpense.description}</Text>
+                    </View>
+                  )}
+                </View>
 
                 {selectedExpense.attachmentUrl && (
-                  <View className="mb-3">
+                  <View className="mb-4">
                     <Text className="text-lg font-semibold text-gray-800">Attachment</Text>
                     <Text className="text-md text-gray-600">{selectedExpense.attachmentUrl}</Text>
                   </View>
@@ -281,31 +292,31 @@ const Expenses = () => {
                 <View className="flex-row justify-between mt-4">
                   <TouchableOpacity
                     onPress={handleEditExpense}
-                    className="flex-1 mr-2 py-3 rounded-lg bg-blue-500"
+                    className="flex-1 mr-2 py-3 rounded-lg bg-[#2A7C76]"
                   >
-                    <Text className="text-white text-center font-semibold">Edit</Text>
+                    <Text className="text-white text-center font-semibold text-lg">Edit</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={handleDeleteExpense}
                     className="flex-1 ml-2 py-3 rounded-lg bg-red-500"
                   >
-                    <Text className="text-white text-center font-semibold">Delete</Text>
+                    <Text className="text-white text-center font-semibold text-lg">Delete</Text>
                   </TouchableOpacity>
                 </View>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={closeModal}
-                  className="w-full py-3 rounded-lg bg-gray-500 mt-4"
+                  className="w-full py-3 rounded-lg bg-gray-400 mt-4"
                 >
-                  <Text className="text-white text-center font-semibold">Close</Text>
-                </TouchableOpacity>
-              </>
+                  <Text className="text-white text-center text-lg font-semibold">Close</Text>
+                </TouchableOpacity> */}
+              </View>
             )}
           </View>
         </ReactNativeModal>
 
         <View className="absolute bottom-20 right-5">
-          <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
+          <AddButton color="#2A7C76" size={65} onPress={handleAddPress} />
         </View>
       </SignedIn>
     </SafeAreaView>
