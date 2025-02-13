@@ -295,7 +295,7 @@ const Wallet = () => {
                             style={{
                               position: 'absolute',
                               top: menuPosition.y + 30,
-                              left: menuPosition.x - 100,
+                              left: menuPosition.x - 120,
                               backgroundColor: 'white',
                               shadowColor: '#000',
                               shadowOffset: { width: 0, height: 2 },
@@ -311,14 +311,18 @@ const Wallet = () => {
                               onPress={() => handleEditWallet(item)}
                               className="py-2 px-4"
                             >
-                              <Text className="text-gray-900">Edit Wallet</Text>
+                              <Text className="text-gray-900 text-center font-medium text-lg">
+                                Edit Wallet
+                              </Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity
                               onPress={() => confirmDeleteWallet(item.id)}
                               className="py-2 px-4"
                             >
-                              <Text className="text-red-500">Delete Wallet</Text>
+                              <Text className="text-red-500 text-center font-medium text-lg">
+                                Delete Wallet
+                              </Text>
                             </TouchableOpacity>
                           </View>
                         </Portal>
@@ -354,7 +358,7 @@ const Wallet = () => {
               style={{ justifyContent: 'center', alignItems: 'center' }}
             >
               <View className="bg-white p-6 rounded-2xl w-4/5">
-                <Text className="text-lg font-semibold text-center mb-4">
+                <Text className="text-xl font-semibold text-center mb-4">
                   {selectedWallet ? 'Edit Wallet' : 'Add a New Wallet'}
                 </Text>
 
@@ -363,7 +367,7 @@ const Wallet = () => {
                   placeholderTextColor="#888"
                   value={walletTitle}
                   onChangeText={setWalletTitle}
-                  className="w-full p-3 mb-4 border rounded-lg border-gray-300"
+                  className="w-full bg-gray-100 p-3 mb-4 border-[1.5px] rounded-lg border-green-700"
                 />
 
                 <TextInput
@@ -372,23 +376,23 @@ const Wallet = () => {
                   value={initialAmount}
                   onChangeText={setInitialAmount}
                   keyboardType="numeric"
-                  className="w-full p-3 mb-4 border rounded-lg border-gray-300"
+                  className="w-full bg-gray-100 p-3 mb-4 border-[1.5px] rounded-lg border-green-700"
                 />
 
                 <TouchableOpacity
                   onPress={selectedWallet ? handleUpdateWallet : handleCreateWallet}
-                  className="w-full py-3 rounded-lg bg-blue-500 mb-2"
+                  className="w-full py-3 rounded-lg bg-[#2A7C76] mb-2"
                 >
-                  <Text className="text-white text-center font-semibold">
+                  <Text className="text-white text-center font-semibold text-lg">
                     {selectedWallet ? 'Update Wallet' : 'Create Wallet'}
                   </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={() => setModalVisible(false)}
-                  className="w-full py-3 rounded-lg bg-gray-300"
+                  className="w-full py-3 rounded-lg bg-red-500"
                 >
-                  <Text className="text-center font-semibold text-gray-700">Cancel</Text>
+                  <Text className="text-center font-semibold text-white text-lg">Cancel</Text>
                 </TouchableOpacity>
               </View>
             </ReactNativeModal>
