@@ -207,7 +207,7 @@ const Expenses = () => {
               renderSectionHeader={({ section: { title } }) => (
                 <View className="p-2">
                   <Text className="text-xl font-bold mt-1">{title}</Text>
-                  <Text className="bg-gray-500 h-0.5 mt-1"></Text>
+                  <Text className="bg-black h-0.5 mt-1"></Text>
                 </View>
               )}
             />
@@ -305,7 +305,7 @@ const Expenses = () => {
         </ReactNativeModal>
 
         <View className="absolute bottom-20 right-5">
-          <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
+          <AddButton color="#2A7C76" size={65} onPress={handleAddPress} />
         </View>
       </SignedIn>
     </SafeAreaView>

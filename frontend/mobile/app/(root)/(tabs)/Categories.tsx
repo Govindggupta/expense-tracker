@@ -5,8 +5,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
-  ScrollView,
   TouchableWithoutFeedback,
+  Animated,
 } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -37,6 +37,7 @@ const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [menuVisible, setMenuVisible] = useState<string | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
+  const [scrollY, setScrollY] = useState(new Animated.Value(0));
 
   const { reload, triggerReload } = useContext(ReloadContext);
 
@@ -232,15 +233,15 @@ const Categories = () => {
   };
 
   const renderCategoryItem = ({ item }: { item: Category }) => (
-    <View className="bg-blue-100 p-2 rounded-lg shadow-md mb-3 border border-blue-400 flex-row items-center justify-between w-full">
-      <View className="w-14 h-14 rounded-xl bg-gray-100 flex items-center justify-center">
+    <View className="bg-[#EFFCFB] p-3 rounded-3xl shadow-md mb-3 border border-green-700 flex-row items-center justify-between w-full">
+      <View className="w-14 h-14 rounded-full bg-white border border-green-700 flex items-center justify-center">
         <Text className="text-lg font-semibold">{item.name[0]}</Text>
       </View>
       <View className="flex-1 ml-4">
-        <Text className="text-lg font-semibold text-gray-900">{item.name}</Text>
+        <Text className="text-xl font-semibold text-green-900">{item.name}</Text>
       </View>
       <TouchableOpacity onPress={(event) => toggleMenu(item.id, event)} className="p-1 relative">
-        <Entypo size={20} name="dots-three-horizontal" color={'#0E3789'} />
+        <Entypo size={20} name="dots-three-horizontal" color={'black'} />
       </TouchableOpacity>
 
       {menuVisible === item.id && (
@@ -249,7 +250,7 @@ const Categories = () => {
             style={{
               position: 'absolute',
               top: menuPosition.y + 30,
-              left: menuPosition.x - 125,
+              left: menuPosition.x - 140,
               backgroundColor: 'white',
               shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
@@ -271,11 +272,11 @@ const Categories = () => {
               }}
               className="py-2 px-4"
             >
-              <Text className="text-gray-900">Edit Category</Text>
+              <Text className="text-gray-900 text-center font-medium text-lg">Edit Category</Text>
             </TouchableOpacity>
 
             <TouchableOpacity onPress={() => confirmDeleteCategory(item.id)} className="py-2 px-4">
-              <Text className="text-red-500">Delete Category</Text>
+              <Text className="text-red-500 text-center font-medium text-lg">Delete Category</Text>
             </TouchableOpacity>
           </View>
         </Portal>
@@ -288,9 +289,18 @@ const Categories = () => {
 
   return (
     <TouchableWithoutFeedback onPress={() => setMenuVisible(null)}>
-      <SafeAreaView className="flex-1 bg-gray-100">
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="absolute top-0 w-full h-56 bg-[#2A7C76] rounded-b-[15%]" />
         <SignedIn>
-          <ScrollView className="flex-1" contentContainerStyle={{ padding: 20, paddingBottom: 80 }}>
+          <Text className="text-white text-center font-bold text-2xl mt-5">Categories</Text>
+          <Animated.ScrollView
+            onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+              useNativeDriver: false,
+            })}
+            scrollEventThrottle={16}
+            className="flex-1"
+            contentContainerStyle={{ padding: 20, paddingBottom: 80 }}
+          >
             {loading ? (
               <ActivityIndicator size="large" color="#2162DB" className="my-5" />
             ) : error ? (
@@ -299,7 +309,18 @@ const Categories = () => {
               <>
                 {incomeCategories.length > 0 && (
                   <>
-                    <Text className="text-xl font-bold text-gray-900 mb-3">Income</Text>
+                    <Animated.Text
+                      className="text-2xl font-bold text-black mb-3"
+                      style={{
+                        color: scrollY.interpolate({
+                          inputRange: [0, 300],
+                          outputRange: ['white', 'black'],
+                          extrapolate: 'clamp',
+                        }),
+                      }}
+                    >
+                      Income
+                    </Animated.Text>
                     <FlatList
                       refreshControl={
                         <RefreshControl refreshing={reload} onRefresh={triggerReload} />
@@ -313,7 +334,18 @@ const Categories = () => {
                 )}
                 {expenseCategories.length > 0 && (
                   <>
-                    <Text className="text-xl font-bold text-gray-900 mt-5 mb-3">Expense</Text>
+                    <Animated.Text
+                      className="text-2xl font-bold text-black mt-5 mb-3"
+                      style={{
+                        color: scrollY.interpolate({
+                          inputRange: [0, 300],
+                          outputRange: ['black', 'white'],
+                          extrapolate: 'clamp',
+                        }),
+                      }}
+                    >
+                      Expense
+                    </Animated.Text>
                     <FlatList
                       data={expenseCategories}
                       keyExtractor={(item) => item.id}
@@ -325,7 +357,7 @@ const Categories = () => {
               </>
             )}
 
-            <View className="items-center mt-5">
+            <View className="items-center mt-3">
               <TouchableOpacity
                 onPress={() => {
                   setModalVisible(true);
@@ -333,13 +365,13 @@ const Categories = () => {
                   setCategoryTitle('');
                   setCategoryType('EXPENSE');
                 }}
-                className="flex flex-row items-center gap-2 justify-center w-1/2 py-2 px-4 rounded-lg border-2 border-blue-400 bg-white shadow-md"
+                className="flex flex-row items-center gap-2 justify-center py-4 px-4 rounded-lg shadow-md bg-[#2A7C76]"
               >
-                <Ionicons name="add-circle-outline" size={22} color={'#0E3789'} />
-                <Text className="text-blue-900 font-semibold text-base">Add New Category</Text>
+                <Ionicons name="add-circle-outline" size={26} color={'white'} />
+                <Text className="text-white font-semibold text-lg">Add New Category</Text>
               </TouchableOpacity>
             </View>
-          </ScrollView>
+          </Animated.ScrollView>
 
           <ReactNativeModal
             isVisible={isModalVisible}
@@ -355,7 +387,7 @@ const Categories = () => {
                 <TouchableOpacity
                   onPress={() => setCategoryType('EXPENSE')}
                   className={`py-2 px-4 rounded-lg ${
-                    categoryType === 'EXPENSE' ? 'bg-blue-500' : 'bg-gray-300'
+                    categoryType === 'EXPENSE' ? 'bg-[#2A7C76]' : 'bg-gray-200'
                   }`}
                 >
                   <Text
@@ -369,7 +401,7 @@ const Categories = () => {
                 <TouchableOpacity
                   onPress={() => setCategoryType('INCOME')}
                   className={`py-2 px-4 rounded-lg ${
-                    categoryType === 'INCOME' ? 'bg-blue-500' : 'bg-gray-300'
+                    categoryType === 'INCOME' ? 'bg-[#2A7C76]' : 'bg-gray-200'
                   }`}
                 >
                   <Text
@@ -382,35 +414,38 @@ const Categories = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text className="text-lg font-semibold text-center mb-4">
+              <Text className="text-lg font-semibold text-center mb-4 text-green-800">
                 {selectedCategory ? 'Edit Category' : 'Add a New Category'}
               </Text>
+
               <TextInput
                 placeholder="Category Title"
                 placeholderTextColor="#888"
                 value={categoryTitle}
                 onChangeText={setCategoryTitle}
-                className="w-full p-3 mb-4 border rounded-lg border-gray-300"
+                className="w-full bg-gray-100 p-3 mb-4 border-[1.5px] rounded-lg border-green-700"
               />
+
               <TouchableOpacity
                 onPress={selectedCategory ? handleUpdateCategory : handleCreateCategory}
-                className="w-full py-3 rounded-lg bg-blue-500 mb-2"
+                className="w-full py-3 rounded-lg bg-[#2A7C76] mb-2"
               >
-                <Text className="text-white text-center font-semibold">
+                <Text className="text-center font-semibold text-white text-lg">
                   {selectedCategory ? 'Update Category' : 'Create Category'}
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
-                className="w-full py-3 rounded-lg bg-gray-300"
+                className="w-full py-3 rounded-lg bg-red-500"
               >
-                <Text className="text-center font-semibold text-gray-700">Cancel</Text>
+                <Text className="text-center font-semibold text-white text-lg">Cancel</Text>
               </TouchableOpacity>
             </View>
           </ReactNativeModal>
 
           <View className="absolute bottom-20 right-5">
-            <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
+            <AddButton color="#2A7C76" size={65} onPress={handleAddPress} />
           </View>
         </SignedIn>
       </SafeAreaView>
