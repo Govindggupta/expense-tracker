@@ -265,3 +265,12 @@ export const deleteExpense = async (req: Request, res: Response) => {
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
   }
 };
+
+// Total Income and Expense
+export const totalIncomeExpense = async (req: Request, res: Response) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+}
