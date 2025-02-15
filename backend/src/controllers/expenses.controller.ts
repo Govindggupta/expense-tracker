@@ -15,6 +15,38 @@ declare global {
 }
 
 const prisma = new PrismaClient();
+
+// create from ocr
+export const ocrExpenses = async (req: Request, res: Response) => {
+  const { amount, date, description, type, categoryId, walletId } = req.body;
+  const { userId } = getAuth(req);
+
+  // Validate required fields
+  if (!amount || !date || !type || !categoryId || !walletId || !userId) {
+    res.status(400).json({ error: 'Missing required fields' });
+    return;
+  }
+
+  try {
+    const newExpense = await prisma.expense.create({
+      data: {
+        amount: parseFloat(amount),
+        date: new Date(date),
+        description: description || null,
+        type: type,
+        categoryId: categoryId,
+        walletId: walletId,
+        userId,
+      },
+    });
+
+    res.status(201).json({ newExpense });
+  } catch (error) {
+    console.error('Error saving expense:', error);
+    res.status(500).json({ error: 'Failed to save expense' });
+  }
+};
+
 // create expense
 export const createExpenses = async (req: Request, res: Response) => {
   try {
@@ -264,4 +296,16 @@ export const deleteExpense = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
   }
+};
+
+// Total Income and Expense
+export const createExpensesA = async (req: Request, res: Response) => {
+  try {
+  } catch (error) {}
+};
+
+// Total Income and Expense
+export const totalIncomeExpense = async (req: Request, res: Response) => {
+  try {
+  } catch (error) {}
 };

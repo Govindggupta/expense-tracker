@@ -26,6 +26,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
+    "tesseract.js": "^6.0.0",
     "typescript": "^5.7.3"
   },
   "devDependencies": {

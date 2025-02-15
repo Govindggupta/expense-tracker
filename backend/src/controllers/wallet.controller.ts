@@ -92,3 +92,12 @@ export const deleteWallet = async (req: Request, res: Response) => {
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
   }
 };
+
+// total wallet amount
+export const totalAmount = async (req: Request, res: Response) => {
+  const { userId } = getAuth(req);
+  try {
+  } catch (error) {
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Internal Server Error', error });
+  }
+};

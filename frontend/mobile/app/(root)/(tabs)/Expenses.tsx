@@ -10,6 +10,20 @@ import { Feather } from '@expo/vector-icons';
 import ReactNativeModal from 'react-native-modal';
 import { ReloadContext } from '@/context/ReloadContext';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  cardShadow: {
+    shadowColor: '#000', // Shadow color
+    shadowOffset: {
+      width: 0, // Horizontal offset
+      height: 10, // Vertical offset
+    },
+    shadowOpacity: 0.9, // Shadow opacity (0 to 1)
+    shadowRadius: 20, // Blur radius
+    elevation: 15, // Android elevation (for shadow)
+  },
+});
 
 const formatDate = (isoDate: string) => {
   try {
@@ -48,7 +62,6 @@ type Expense = {
   attachmentUrl?: string;
 };
 
-// Utility function to group expenses by month
 const groupExpensesByMonth = (expenses: Expense[]) => {
   const grouped: { [key: string]: Expense[] } = {};
 
@@ -78,31 +91,81 @@ const Expenses = () => {
 
   const { reload, triggerReload } = useContext(ReloadContext);
 
+  const [totalBalance, setTotalBalance] = useState<number>(0);
+  const [totalIncome, setTotalIncome] = useState<number>(0);
+  const [totalExpenses, setTotalExpenses] = useState<number>(0);
+
   useEffect(() => {
-    const fetchExpenses = async () => {
+    const fetchExpensesAndBalance = async () => {
       try {
         const token = await getToken();
-        const response = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/expenses/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
 
-        const formattedExpenses = response.data.expenses.map((expense: Expense) => ({
+        // Fetch expenses
+        const expensesResponse = await axios.get(
+          'https://expense-tracker-ldy5.onrender.com/v1/expenses/',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const formattedExpenses = expensesResponse.data.expenses.map((expense: Expense) => ({
           ...expense,
           date: new Date(expense.date).toISOString(),
           walletName: expense.walletName || 'Unknown Wallet',
         }));
 
         setExpenses(formattedExpenses);
+
+        // Debug: Log formatted expenses to verify data
+        // console.log('Formatted Expenses:', formattedExpenses);
+
+        // Calculate total income and expenses
+        let incomeTotal = 0;
+        let expensesTotal = 0;
+
+        formattedExpenses.forEach((expense: any) => {
+          if (expense.type === 'INCOME') {
+            incomeTotal += Number(expense.amount); // Ensure amount is a number
+          } else if (expense.type === 'EXPENSE') {
+            expensesTotal += Number(expense.amount); // Ensure amount is a number
+          }
+        });
+
+        // Debug: Log calculated totals
+        // console.log('Total Income:', incomeTotal);
+        // console.log('Total Expenses:', expensesTotal);
+
+        setTotalIncome(incomeTotal);
+        setTotalExpenses(expensesTotal);
+
+        // Fetch wallets to calculate total balance
+        const walletsResponse = await axios.get(
+          'https://expense-tracker-ldy5.onrender.com/v1/wallet/',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const total = walletsResponse.data.wallets.reduce(
+          (acc: number, wallet: any) => acc + Number(wallet.balance),
+          0,
+        );
+        setTotalBalance(total);
+
+        // Debug: Log total balance
+        console.log('Total Balance:', total);
       } catch (error) {
-        console.error('Error fetching expenses:', error);
+        console.error('Error fetching expenses or wallets:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchExpenses();
+    fetchExpensesAndBalance();
   }, [user, reload]);
 
   const handleAddPress = () => {
@@ -165,17 +228,89 @@ const Expenses = () => {
       <View className="absolute top-0 w-full h-56 bg-[#2A7C76] rounded-b-[15%]" />
       <SignedIn>
         <View className="w-full p-2 flex-1">
-          <View className="bg-gray-300 rounded-3xl h-56 w-11/12 mt-16 m-auto">
-            {/* component here */}
+          <View
+            style={[
+              styles.cardShadow,
+              {
+                backgroundColor: '#b4dad7',
+                borderRadius: 24,
+                height: 224,
+                width: '91.666%',
+                marginTop: 64,
+                marginHorizontal: 'auto',
+                padding: 16,
+              },
+            ]}
+          >
+            <Text
+              style={{
+                fontSize: 30,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: '#1f2937',
+                marginBottom: 16,
+              }}
+            >
+              Total Balance
+            </Text>
+            <Text
+              style={{
+                fontSize: 36,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: '#1f2937',
+                marginBottom: 24,
+              }}
+            >
+              ₹{totalBalance}
+            </Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Text
+                  style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}
+                >
+                  Total Income
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: '#10b981',
+                  }}
+                >
+                  ₹{totalIncome}
+                </Text>
+              </View>
+              <View style={{ flex: 1, marginLeft: 8 }}>
+                <Text
+                  style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}
+                >
+                  Total Expenses
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: '#ef4444',
+                  }}
+                >
+                  ₹{totalExpenses}
+                </Text>
+              </View>
+            </View>
           </View>
-          <Text className="text-2xl font-semibold text-center mt-4">Transactions History</Text>
+          <Text className="text-2xl font-semibold text-center mt-4 text-gray-800">
+            Transactions History
+          </Text>
 
           {loading ? (
-            <ActivityIndicator size="large" color="#2162DB" />
+            <ActivityIndicator size="large" color="#2162DB" className="mt-8" />
           ) : expenses.length === 0 ? (
             <View className="flex-1 justify-center items-center">
               <Text className="text-lg text-gray-500">No expenses yet! Add one</Text>
-              <Feather name="arrow-down-right" size={40} color="#2162DB" />
+              <Feather name="arrow-down-right" size={40} color="#2162DB" className="mt-4" />
             </View>
           ) : (
             <SectionList
@@ -188,7 +323,7 @@ const Expenses = () => {
                   onPress={() => handleExpensePress(item)}
                   className="p-3 mb-3 mx-2 flex-row items-center border-b border-b-gray-200 justify-between"
                 >
-                  <View className="w-12 h-12 bg-gray-300 rounded-md flex items-center justify-center">
+                  <View className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center">
                     <Text className="text-lg font-bold">
                       {item.categoryName.charAt(0).toUpperCase()}
                     </Text>
@@ -209,9 +344,9 @@ const Expenses = () => {
                 </TouchableOpacity>
               )}
               renderSectionHeader={({ section: { title } }) => (
-                <View className="p-2">
-                  <Text className="text-xl font-bold mt-1 text-gray-900">{title}</Text>
-                  <Text className="bg-gray-400 h-0.5 mt-1"></Text>
+                <View className="p-2 bg-gray-100">
+                  <Text className="text-xl font-bold text-gray-900">{title}</Text>
+                  <View className="bg-gray-400 h-0.5 mt-1" />
                 </View>
               )}
             />

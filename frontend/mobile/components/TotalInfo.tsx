@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const Recurring = () => {
+const TotalInfo = () => {
   return (
     <View>
-      <Text>Recurring</Text>
+      <Text>TotalInfo</Text>
     </View>
   )
 }
 
-export default Recurring;
+export default TotalInfo;
