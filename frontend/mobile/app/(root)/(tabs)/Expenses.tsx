@@ -101,11 +101,14 @@ const Expenses = () => {
         const token = await getToken();
 
         // Fetch expenses
-        const expensesResponse = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/expenses/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const expensesResponse = await axios.get(
+          'https://expense-tracker-ldy5.onrender.com/v1/expenses/',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         const formattedExpenses = expensesResponse.data.expenses.map((expense: Expense) => ({
           ...expense,
@@ -122,7 +125,7 @@ const Expenses = () => {
         let incomeTotal = 0;
         let expensesTotal = 0;
 
-        formattedExpenses.forEach((expense : any) => {
+        formattedExpenses.forEach((expense: any) => {
           if (expense.type === 'INCOME') {
             incomeTotal += Number(expense.amount); // Ensure amount is a number
           } else if (expense.type === 'EXPENSE') {
@@ -138,13 +141,19 @@ const Expenses = () => {
         setTotalExpenses(expensesTotal);
 
         // Fetch wallets to calculate total balance
-        const walletsResponse = await axios.get('https://expense-tracker-ldy5.onrender.com/v1/wallet/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const walletsResponse = await axios.get(
+          'https://expense-tracker-ldy5.onrender.com/v1/wallet/',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
-        const total = walletsResponse.data.wallets.reduce((acc: number, wallet: any) => acc + Number(wallet.balance), 0);
+        const total = walletsResponse.data.wallets.reduce(
+          (acc: number, wallet: any) => acc + Number(wallet.balance),
+          0,
+        );
         setTotalBalance(total);
 
         // Debug: Log total balance
@@ -219,21 +228,82 @@ const Expenses = () => {
       <View className="absolute top-0 w-full h-56 bg-[#2A7C76] rounded-b-[15%]" />
       <SignedIn>
         <View className="w-full p-2 flex-1">
-          <View style={[styles.cardShadow, { backgroundColor: '#b4dad7', borderRadius: 24, height: 224, width: '91.666%', marginTop: 64, marginHorizontal: 'auto', padding: 16 }]}>
-  <Text style={{ fontSize: 30, fontWeight: 'bold', textAlign: 'center', color: '#1f2937', marginBottom: 16 }}>Total Balance</Text>
-  <Text style={{ fontSize: 36, fontWeight: 'bold', textAlign: 'center', color: '#1f2937', marginBottom: 24 }}>₹{totalBalance}</Text>
-  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-    <View style={{ flex: 1, marginRight: 8 }}>
-      <Text style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}>Total Income</Text>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#10b981' }}>₹{totalIncome}</Text>
-    </View>
-    <View style={{ flex: 1, marginLeft: 8 }}>
-      <Text style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}>Total Expenses</Text>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#ef4444' }}>₹{totalExpenses}</Text>
-    </View>
-  </View>
-</View>
-          <Text className="text-2xl font-semibold text-center mt-4 text-gray-800">Transactions History</Text>
+          <View
+            style={[
+              styles.cardShadow,
+              {
+                backgroundColor: '#b4dad7',
+                borderRadius: 24,
+                height: 224,
+                width: '91.666%',
+                marginTop: 64,
+                marginHorizontal: 'auto',
+                padding: 16,
+              },
+            ]}
+          >
+            <Text
+              style={{
+                fontSize: 30,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: '#1f2937',
+                marginBottom: 16,
+              }}
+            >
+              Total Balance
+            </Text>
+            <Text
+              style={{
+                fontSize: 36,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                color: '#1f2937',
+                marginBottom: 24,
+              }}
+            >
+              ₹{totalBalance}
+            </Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Text
+                  style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}
+                >
+                  Total Income
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: '#10b981',
+                  }}
+                >
+                  ₹{totalIncome}
+                </Text>
+              </View>
+              <View style={{ flex: 1, marginLeft: 8 }}>
+                <Text
+                  style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}
+                >
+                  Total Expenses
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    color: '#ef4444',
+                  }}
+                >
+                  ₹{totalExpenses}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <Text className="text-2xl font-semibold text-center mt-4 text-gray-800">
+            Transactions History
+          </Text>
 
           {loading ? (
             <ActivityIndicator size="large" color="#2162DB" className="mt-8" />

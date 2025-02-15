@@ -6,6 +6,7 @@ import {
   getExpenseById,
   updateExpense,
   deleteExpense,
+  ocrExpenses,
 } from '../controllers/expenses.controller.js';
 
 const router = express.Router();
@@ -15,5 +16,6 @@ router.get('/', requireAuth(), getAllExpenses);
 router.get('/:id', requireAuth(), getExpenseById);
 router.put('/:id', requireAuth(), updateExpense);
 router.delete('/:id', requireAuth(), deleteExpense);
+router.post('/ocr', requireAuth(), ocrExpenses);
 
 export default router;

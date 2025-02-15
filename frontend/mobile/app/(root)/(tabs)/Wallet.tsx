@@ -252,7 +252,7 @@ const Wallet = () => {
           <View className="w-full h-full p-5">
             <View className="w-full flex gap-3 overflow-visible">
               <Text className="text-white text-center font-bold text-2xl">
-                Your Personal Wallets
+                Your Personal Wallet
               </Text>
               {loading ? (
                 <ActivityIndicator size="large" color="#2162DB" />

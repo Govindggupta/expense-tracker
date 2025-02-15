@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import ImagePickerButton from '@/components/ImagePickerButton';
 import OCRProcessor from '@/components/OCRProcessor';
 import DisplayResult from '@/components/DisplayResult';
@@ -18,6 +18,7 @@ const Scan = () => {
         padding: 20,
       }}
     >
+      <Text className="text-2xl mb-3 font-semibold">Drag your Bill here!</Text>
       <ImagePickerButton onImagePicked={setImageUri} />
 
       {imageUri && (
