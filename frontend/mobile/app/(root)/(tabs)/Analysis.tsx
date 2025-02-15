@@ -32,7 +32,7 @@ const Analysis = () => {
   const [error, setError] = useState('');
   const [analysisType, setAnalysisType] = useState<'expense' | 'income' | 'wallet'>('expense');
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'>(
-    'daily',
+    'yearly',
   );
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
