@@ -72,16 +72,6 @@ const TabsComponent = () => (
       }}
     />
     <Tabs.Screen
-      name="Recurring"
-      options={{
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="calendar-clock" size={size} color={color} />
-        ),
-        tabBarLabel: 'Auto',
-        headerShown: false,
-      }}
-    />
-    <Tabs.Screen
       name="Wallet"
       options={{
         tabBarIcon: ({ color, size }) => <Ionicons name="wallet" size={size} color={color} />,
