@@ -10,6 +10,20 @@ import { Feather } from '@expo/vector-icons';
 import ReactNativeModal from 'react-native-modal';
 import { ReloadContext } from '@/context/ReloadContext';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { StyleSheet } from 'react-native';
+
+const styles = StyleSheet.create({
+  cardShadow: {
+    shadowColor: '#000', // Shadow color
+    shadowOffset: {
+      width: 0, // Horizontal offset
+      height: 10, // Vertical offset
+    },
+    shadowOpacity: 0.9, // Shadow opacity (0 to 1)
+    shadowRadius: 20, // Blur radius
+    elevation: 15, // Android elevation (for shadow)
+  },
+});
 
 const formatDate = (isoDate: string) => {
   try {
@@ -205,20 +219,20 @@ const Expenses = () => {
       <View className="absolute top-0 w-full h-56 bg-[#2A7C76] rounded-b-[15%]" />
       <SignedIn>
         <View className="w-full p-2 flex-1">
-          <View className="bg-[#b4dad7] rounded-3xl h-56 w-11/12 mt-16 mx-auto p-4 shadow-lg">
-            <Text className="text-3xl font-bold text-center text-gray-800 mb-4">Total Balance</Text>
-            <Text className="text-4xl font-bold text-center text-gray-800 mb-6">₹{totalBalance}</Text>
-            <View className="flex-row justify-between">
-              <View className="flex-1 mr-2">
-                <Text className="text-lg font-semibold text-center text-gray-600">Total Income</Text>
-                <Text className="text-xl font-bold text-center text-green-500">₹{totalIncome}</Text>
-              </View>
-              <View className="flex-1 ml-2">
-                <Text className="text-lg font-semibold text-center text-gray-600">Total Expenses</Text>
-                <Text className="text-xl font-bold text-center text-red-500">₹{totalExpenses}</Text>
-              </View>
-            </View>
-          </View>
+          <View style={[styles.cardShadow, { backgroundColor: '#b4dad7', borderRadius: 24, height: 224, width: '91.666%', marginTop: 64, marginHorizontal: 'auto', padding: 16 }]}>
+  <Text style={{ fontSize: 30, fontWeight: 'bold', textAlign: 'center', color: '#1f2937', marginBottom: 16 }}>Total Balance</Text>
+  <Text style={{ fontSize: 36, fontWeight: 'bold', textAlign: 'center', color: '#1f2937', marginBottom: 24 }}>₹{totalBalance}</Text>
+  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+    <View style={{ flex: 1, marginRight: 8 }}>
+      <Text style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}>Total Income</Text>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#10b981' }}>₹{totalIncome}</Text>
+    </View>
+    <View style={{ flex: 1, marginLeft: 8 }}>
+      <Text style={{ fontSize: 18, fontWeight: '600', textAlign: 'center', color: '#4b5563' }}>Total Expenses</Text>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', color: '#ef4444' }}>₹{totalExpenses}</Text>
+    </View>
+  </View>
+</View>
           <Text className="text-2xl font-semibold text-center mt-4 text-gray-800">Transactions History</Text>
 
           {loading ? (
