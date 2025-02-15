@@ -62,6 +62,16 @@ const TabsComponent = () => (
       }}
     />
     <Tabs.Screen
+      name="Scan"
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <MaterialCommunityIcons name="image-filter-center-focus-weak" size={size} color={color} />
+        ),
+        tabBarLabel: 'Scan',
+        headerShown: false,
+      }}
+    />
+    <Tabs.Screen
       name="Recurring"
       options={{
         tabBarIcon: ({ color, size }) => (
@@ -84,14 +94,6 @@ const TabsComponent = () => (
       options={{
         tabBarIcon: ({ color, size }) => <Ionicons name="pricetag" size={size} color={color} />,
         tabBarLabel: 'Category',
-        headerShown: false,
-      }}
-    />
-    <Tabs.Screen
-      name="Split"
-      options={{
-        tabBarIcon: ({ color, size }) => <Entypo name="slideshare" size={size} color={color} />,
-        tabBarLabel: 'Split',
         headerShown: false,
       }}
     />
