@@ -31,7 +31,9 @@ const Analysis = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [analysisType, setAnalysisType] = useState<'expense' | 'income' | 'wallet'>('expense');
-  const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'>('daily');
+  const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly' | 'yearly' | 'custom'>(
+    'daily',
+  );
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -105,53 +107,66 @@ const Analysis = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 p-5">
+    <SafeAreaView className="flex-1 p-5 bg-white">
       <SignedIn>
         <View className="w-full items-center">
-          <Picker
-            selectedValue={analysisType}
-            onValueChange={(itemValue) => setAnalysisType(itemValue)}
-            style={{ width: '100%', marginBottom: 10 }}
-          >
-            <Picker.Item label="Expense" value="expense" />
-            <Picker.Item label="Income" value="income" />
-            <Picker.Item label="Wallet" value="wallet" />
-          </Picker>
+          <View className="flex-row justify-between w-full mb-4">
+            {/* Analysis Type Picker */}
+            <View className="flex-1 bg-white border border-[#2A7C76] rounded-lg mr-2">
+              <Picker
+                selectedValue={analysisType}
+                onValueChange={(itemValue) => setAnalysisType(itemValue)}
+                style={{ width: '100%', height: 50, color: '#2A7C76' }}
+              >
+                <Picker.Item label="Expense" value="expense" />
+                <Picker.Item label="Income" value="income" />
+                <Picker.Item label="Wallet" value="wallet" />
+              </Picker>
+            </View>
 
-          <Picker
-            selectedValue={period}
-            onValueChange={(itemValue) => setPeriod(itemValue)}
-            style={{ width: '100%', marginBottom: 10 }}
-          >
-            <Picker.Item label="Day" value="daily" />
-            <Picker.Item label="Week" value="weekly" />
-            <Picker.Item label="Month" value="monthly" />
-            <Picker.Item label="Year" value="yearly" />
-            <Picker.Item label="Custom" value="custom" />
-          </Picker>
+            {/* Period Picker */}
+            <View className="flex-1 bg-white border border-[#2A7C76] rounded-lg ml-2">
+              <Picker
+                selectedValue={period}
+                onValueChange={(itemValue) => setPeriod(itemValue)}
+                style={{ width: '100%', height: 50, color: '#2A7C76' }}
+              >
+                <Picker.Item label="Day" value="daily" />
+                <Picker.Item label="Week" value="weekly" />
+                <Picker.Item label="Month" value="monthly" />
+                <Picker.Item label="Year" value="yearly" />
+                <Picker.Item label="Custom" value="custom" />
+              </Picker>
+            </View>
+          </View>
 
+          {/* Custom Date Pickers */}
           {period === 'custom' && (
-            <View>
-              <DateTimePicker
-                value={startDate}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  if (selectedDate) {
-                    setStartDate(selectedDate);
-                  }
-                }}
-              />
-              <DateTimePicker
-                value={endDate}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  if (selectedDate) {
-                    setEndDate(selectedDate);
-                  }
-                }}
-              />
+            <View className="flex-row justify-between w-full">
+              <View className="flex-1 bg-white border border-[#2A7C76] rounded-lg mr-2">
+                <DateTimePicker
+                  value={startDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) {
+                      setStartDate(selectedDate);
+                    }
+                  }}
+                />
+              </View>
+              <View className="flex-1 bg-white border border-[#2A7C76] rounded-lg ml-2">
+                <DateTimePicker
+                  value={endDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) {
+                      setEndDate(selectedDate);
+                    }
+                  }}
+                />
+              </View>
             </View>
           )}
 
@@ -185,33 +200,54 @@ const Analysis = () => {
           </View>
         </View>
 
-        <FlatList
-          data={analysisType === 'wallet' ? walletData : expenseData}
-          keyExtractor={(item) => (analysisType === 'wallet' ? item.walletId : item.id)}
-          renderItem={({ item }) => (
-            <View className="w-full bg-blue-100 flex-row justify-between h-16 items-center px-3 rounded my-2">
-              <View className="flex-row items-center gap-2">
-                <View className="h-12 w-12 bg-white rounded"></View>
+        {analysisType === 'wallet' ? (
+          <FlatList
+            data={walletData}
+            keyExtractor={(item) => item.walletId}
+            renderItem={({ item }) => (
+              <View className="w-full bg-[#EFFCFB] border border-green-700 rounded-3xl flex-row justify-between h-16 items-center px-3 my-2">
+                <View className="flex-row items-center gap-2">
+                  <View className="h-12 w-12 border border-green-700 bg-white rounded-lg flex justify-center items-center">
+                    <Text className="text-lg font-bold">{item.walletName[0]}</Text>
+                  </View>
+                  <Text className="text-lg font-medium">{item.walletName}</Text>
+                </View>
                 <Text className="text-lg font-medium">
-                  {analysisType === 'wallet' ? item.walletName : item.categoryName}
+                  Net: ₹{item.totalIncome - item.totalExpense}
                 </Text>
               </View>
-              <Text className="text-lg font-medium">
-                {analysisType === 'wallet'
-                  ? `Net: $${item.totalIncome - item.totalExpense}`
-                  : `$${item.totalAmount}`}
-              </Text>
-            </View>
-          )}
-          ListEmptyComponent={
-            <View className="flex-1 items-center justify-center">
-              <Text className="text-gray-500">No data available.</Text>
-            </View>
-          }
-        />
+            )}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-gray-500">No wallet data available.</Text>
+              </View>
+            }
+          />
+        ) : (
+          <FlatList
+            data={expenseData}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View className="w-full bg-[#EFFCFB] border border-green-700 rounded-3xl flex-row justify-between h-16 items-center px-3 my-2">
+                <View className="flex-row items-center gap-2">
+                  <View className="h-12 w-12 border border-green-700 bg-white rounded-full flex justify-center items-center">
+                    <Text className="text-lg font-bold">{item.categoryName[0]}</Text>
+                  </View>
+                  <Text className="text-lg font-medium">{item.categoryName}</Text>
+                </View>
+                <Text className="text-lg font-medium">₹{item.totalAmount}</Text>
+              </View>
+            )}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center">
+                <Text className="text-gray-500">No expense data available.</Text>
+              </View>
+            }
+          />
+        )}
 
         <View className="absolute bottom-20 right-5">
-          <AddButton color="#2162DB" size={65} onPress={handleAddPress} />
+          <AddButton color="#2A7C76" size={65} onPress={handleAddPress} />
         </View>
       </SignedIn>
     </SafeAreaView>

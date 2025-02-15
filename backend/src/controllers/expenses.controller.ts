@@ -267,6 +267,15 @@ export const deleteExpense = async (req: Request, res: Response) => {
 };
 
 // Total Income and Expense
+export const createExpensesA = async (req: Request, res: Response) => {
+  try {
+    
+  } catch (error) {
+    
+  }
+}
+
+// Total Income and Expense
 export const totalIncomeExpense = async (req: Request, res: Response) => {
   try {
     
