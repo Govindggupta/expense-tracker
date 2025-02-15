@@ -66,9 +66,7 @@ interface Props {
 
 const Scan = (text: string) => {
   const amountMatch = text.match(/(?:₹|INR)?\s?(\d+\.\d{1,2}|\d{2,5})\s?(?:INR|₹)?/g);
-  const categoryMatch = text.match(
-    /(groceries|shopping|fuel|shop)/i,
-  );
+  const categoryMatch = text.match(/(groceries|shopping|fuel|shop)/i);
   const walletMatch = text.match(/(cash|card|UPI)/i);
 
   const datePatterns = [
@@ -133,11 +131,15 @@ const ExpenseExtractor: React.FC<Props> = ({ extractedText }) => {
         walletId,
       };
 
-      const response = await axios.post('http://192.168.0.111:8000/v1/expenses/ocr', expenseData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        'https://expense-tracker-ldy5.onrender.com/v1/expenses/ocr',
+        expenseData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
       if (response.data) {
         console.log('Expense saved successfully:', response.data);
