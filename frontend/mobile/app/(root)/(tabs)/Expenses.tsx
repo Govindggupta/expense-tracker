@@ -101,15 +101,26 @@ const Expenses = () => {
 
         setExpenses(formattedExpenses);
 
-        // Calculate total income and expenses
-        const income = formattedExpenses
-          .filter((expense) => expense.type === 'INCOME')
-          .reduce((acc, expense) => acc + expense.amount, 0);
-        const expensesTotal = formattedExpenses
-          .filter((expense) => expense.type === 'EXPENSE')
-          .reduce((acc, expense) => acc + expense.amount, 0);
+        // Debug: Log formatted expenses to verify data
+        // console.log('Formatted Expenses:', formattedExpenses);
 
-        setTotalIncome(income);
+        // Calculate total income and expenses
+        let incomeTotal = 0;
+        let expensesTotal = 0;
+
+        formattedExpenses.forEach((expense : any) => {
+          if (expense.type === 'INCOME') {
+            incomeTotal += Number(expense.amount); // Ensure amount is a number
+          } else if (expense.type === 'EXPENSE') {
+            expensesTotal += Number(expense.amount); // Ensure amount is a number
+          }
+        });
+
+        // Debug: Log calculated totals
+        // console.log('Total Income:', incomeTotal);
+        // console.log('Total Expenses:', expensesTotal);
+
+        setTotalIncome(incomeTotal);
         setTotalExpenses(expensesTotal);
 
         // Fetch wallets to calculate total balance
@@ -119,8 +130,11 @@ const Expenses = () => {
           },
         });
 
-        const total = walletsResponse.data.wallets.reduce((acc: number, wallet: any) => acc + wallet.balance, 0);
+        const total = walletsResponse.data.wallets.reduce((acc: number, wallet: any) => acc + Number(wallet.balance), 0);
         setTotalBalance(total);
+
+        // Debug: Log total balance
+        console.log('Total Balance:', total);
       } catch (error) {
         console.error('Error fetching expenses or wallets:', error);
       } finally {
@@ -266,8 +280,87 @@ const Expenses = () => {
           <View className="bg-white p-6 rounded-2xl w-11/12">
             {selectedExpense && (
               <View>
-                <Text className="text-xl font-bold text-center mb-4 text-[#2A7C76]">Expense Details</Text>
-                {/* ... (keep the existing modal content) */}
+                <Text className="text-xl font-bold text-center mb-4 text-[#2A7C76]">
+                  Expense Details
+                </Text>
+
+                <View className="flex-row justify-between mb-4">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-lg font-semibold text-gray-800">Type</Text>
+                    <Text
+                      className={`${
+                        selectedExpense.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
+                      } text-md font-bold`}
+                    >
+                      {selectedExpense.type === 'INCOME' ? 'Income' : 'Expense'}
+                    </Text>
+                  </View>
+                  <View className="flex-1 ml-2">
+                    <Text className="text-lg font-semibold text-gray-800">Wallet</Text>
+                    <Text className="text-md text-gray-600">{selectedExpense.walletName}</Text>
+                  </View>
+                </View>
+
+                <View className="flex-row justify-between mb-4">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-lg font-semibold text-gray-800">Category</Text>
+                    <Text className="text-md text-gray-600">{selectedExpense.categoryName}</Text>
+                  </View>
+                  <View className="flex-1 ml-2">
+                    <Text className="text-lg font-semibold text-gray-800">Amount</Text>
+                    <Text
+                      className={`${
+                        selectedExpense.type === 'INCOME' ? 'text-green-500' : 'text-red-500'
+                      } text-md font-bold`}
+                    >
+                      {selectedExpense.type === 'INCOME' ? '+' : '-'} ₹{selectedExpense.amount}
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="flex-row justify-between mb-4">
+                  <View className="flex-1 mr-2">
+                    <Text className="text-lg font-semibold text-gray-800">Date</Text>
+                    <Text className="text-md text-gray-600">
+                      {formatDate(selectedExpense.date)}
+                    </Text>
+                  </View>
+                  {selectedExpense.description && (
+                    <View className="flex-1 ml-2">
+                      <Text className="text-lg font-semibold text-gray-800">Description</Text>
+                      <Text className="text-md text-gray-600">{selectedExpense.description}</Text>
+                    </View>
+                  )}
+                </View>
+
+                {selectedExpense.attachmentUrl && (
+                  <View className="mb-4">
+                    <Text className="text-lg font-semibold text-gray-800">Attachment</Text>
+                    <Text className="text-md text-gray-600">{selectedExpense.attachmentUrl}</Text>
+                  </View>
+                )}
+
+                <View className="flex-row justify-between mt-4">
+                  <TouchableOpacity
+                    onPress={handleEditExpense}
+                    className="flex-1 mr-2 py-3 rounded-lg bg-[#2A7C76]"
+                  >
+                    <Text className="text-white text-center font-semibold text-lg">Edit</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={handleDeleteExpense}
+                    className="flex-1 ml-2 py-3 rounded-lg bg-red-500"
+                  >
+                    <Text className="text-white text-center font-semibold text-lg">Delete</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* <TouchableOpacity
+                  onPress={closeModal}
+                  className="w-full py-3 rounded-lg bg-gray-400 mt-4"
+                >
+                  <Text className="text-white text-center text-lg font-semibold">Close</Text>
+                </TouchableOpacity> */}
               </View>
             )}
           </View>
